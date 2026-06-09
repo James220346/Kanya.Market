@@ -1,15 +1,14 @@
-<! html>
+<!DOCTYPE html>
 <html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Market POS Pro</title>
     
-    <!-- PWA & Mobile App Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="KanyaMraket">
+    <meta name="apple-mobile-web-app-title" content="POS ร้าน JameS">
     <meta name="theme-color" content="#f0f4f8">
     
     <link rel="apple-touch-icon" href="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='bg' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%238b5cf6' /%3E%3Cstop offset='100%25' stop-color='%23ec4899' /%3E%3C/linearGradient%3E%3ClinearGradient id='cloth' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23ffffff' /%3E%3Cstop offset='100%25' stop-color='%23e2e8f0' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='512' height='512' rx='120' fill='url(%23bg)'/%3E%3Cpath d='M150 140 C150 140 200 100 256 100 C312 100 362 140 362 140 L440 200 C450 210 440 240 420 240 L380 210 L380 400 C380 420 360 420 360 420 L152 420 C152 420 132 420 132 400 L132 210 L92 240 C72 240 62 210 72 200 Z' fill='url(%23cloth)' /%3E%3Ccircle cx='210' cy='250' r='20' fill='%231e293b'/%3E%3Ccircle cx='302' cy='250' r='20' fill='%231e293b'/%3E%3Ccircle cx='215' cy='243' r='6' fill='%23ffffff'/%3E%3Ccircle cx='307' cy='243' r='6' fill='%23ffffff'/%3E%3Cpath d='M236 270 Q 256 295 276 270' stroke='%231e293b' stroke-width='14' stroke-linecap='round' fill='transparent'/%3E%3Cellipse cx='170' cy='275' rx='18' ry='12' fill='%23ff9a9e' opacity='0.8'/%3E%3Cellipse cx='342' cy='275' rx='18' ry='12' fill='%23ff9a9e' opacity='0.8'/%3E%3C/svg%3E">
@@ -17,7 +16,7 @@
     <script>
         const manifest = {
             "name": "Market POS Pro",
-            "short_name": "Kanya Market",
+            "short_name": "POS ร้าน JameS",
             "description": "ระบบจัดการร้านผ้ามือสองหน้าตลาด",
             "start_url": ".",
             "display": "standalone",
@@ -76,16 +75,17 @@
         const App = () => {
             const [activeTab, setActiveTab] = React.useState('sell');
             
-            // 🌟 อัปเดต Key เป็น V19 ดึงยอดเก่ามารวมด้วย 🌟
-            const [sales, setSales] = React.useState(() => JSON.parse(localStorage.getItem('pos_sales_v19') || localStorage.getItem('pos_sales_v17') || localStorage.getItem('pos_sales_v16')) || []);
-            const [expenses, setExpenses] = React.useState(() => JSON.parse(localStorage.getItem('pos_expenses_v19') || localStorage.getItem('pos_expenses_v17') || localStorage.getItem('pos_expenses_v16')) || []);
-            const [bales, setBales] = React.useState(() => JSON.parse(localStorage.getItem('pos_bales_v19') || localStorage.getItem('pos_bales_v17') || localStorage.getItem('pos_bales_v16')) || []);
-            const [settings, setSettings] = React.useState(() => JSON.parse(localStorage.getItem('pos_settings_v19') || localStorage.getItem('pos_settings_v17')) || {
+            // ดึงข้อมูลเวอร์ชันก่อนหน้า
+            const [sales, setSales] = React.useState(() => JSON.parse(localStorage.getItem('pos_sales_v21') || localStorage.getItem('pos_sales_v20') || localStorage.getItem('pos_sales_v19')) || []);
+            const [expenses, setExpenses] = React.useState(() => JSON.parse(localStorage.getItem('pos_expenses_v21') || localStorage.getItem('pos_expenses_v20') || localStorage.getItem('pos_expenses_v19')) || []);
+            const [bales, setBales] = React.useState(() => JSON.parse(localStorage.getItem('pos_bales_v21') || localStorage.getItem('pos_bales_v20') || localStorage.getItem('pos_bales_v19')) || []);
+            const [settings, setSettings] = React.useState(() => JSON.parse(localStorage.getItem('pos_settings_v21') || localStorage.getItem('pos_settings_v20')) || {
                 promptpayId: '', shopName: 'ร้านผ้า JameS',
-                defaultCategories: ['เสื้อยืด', 'เชิ้ต', 'กางเกงขายาว', 'กางเกงขาสั้น', 'เสื้อกล้าม', 'เดรส', 'อื่นๆ']
+                defaultCategories: ['เสื้อยืด', 'เชิ้ต', 'กางเกง', 'ขาสั้น', 'เสื้อกล้าม', 'เดรส', 'กางเกงขายาว', 'อื่นๆ']
             });
 
             const [customPrice, setCustomPrice] = React.useState('');
+            const [itemQty, setItemQty] = React.useState(1); 
             const [selectedCategory, setSelectedCategory] = React.useState(settings.defaultCategories[0]);
             
             const [showExpenseModal, setShowExpenseModal] = React.useState(false);
@@ -100,19 +100,18 @@
 
             const priceInputRef = React.useRef(null);
 
-            React.useEffect(() => localStorage.setItem('pos_sales_v19', JSON.stringify(sales)), [sales]);
-            React.useEffect(() => localStorage.setItem('pos_expenses_v19', JSON.stringify(expenses)), [expenses]);
-            React.useEffect(() => localStorage.setItem('pos_bales_v19', JSON.stringify(bales)), [bales]);
-            React.useEffect(() => localStorage.setItem('pos_settings_v19', JSON.stringify(settings)), [settings]);
+            React.useEffect(() => localStorage.setItem('pos_sales_v21', JSON.stringify(sales)), [sales]);
+            React.useEffect(() => localStorage.setItem('pos_expenses_v21', JSON.stringify(expenses)), [expenses]);
+            React.useEffect(() => localStorage.setItem('pos_bales_v21', JSON.stringify(bales)), [bales]);
+            React.useEffect(() => localStorage.setItem('pos_settings_v21', JSON.stringify(settings)), [settings]);
 
-            // 🌟 ระบบ "รวบยอดข้อมูลอดีตอัตโนมัติ" (Auto Data Compression) 🌟
+            // ระบบรวบยอดออโต้
             React.useEffect(() => {
                 let hasChanges = false;
                 let newSales = [...sales];
                 let newExpenses = [...expenses];
                 const todayStr = new Date().toDateString();
 
-                // รวบยอดบิล "ขาย" ที่ไม่ใช่วันนี้
                 const oldSales = newSales.filter(s => new Date(s.timestamp).toDateString() !== todayStr && !s.isCompressed);
                 if(oldSales.length > 0) {
                     const grouped = {};
@@ -120,16 +119,16 @@
                         const d = new Date(s.timestamp).toDateString();
                         const key = `${d}_${s.category}_${s.paymentMethod}`;
                         if (!grouped[key]) {
-                            grouped[key] = { id: `comp_s_${Date.now()}_${Math.random()}`, amount: 0, category: s.category, paymentMethod: s.paymentMethod, timestamp: s.timestamp, isCompressed: true };
+                            grouped[key] = { id: `comp_s_${Date.now()}_${Math.random()}`, amount: 0, qty: 0, category: s.category, paymentMethod: s.paymentMethod, timestamp: s.timestamp, isCompressed: true };
                         }
                         grouped[key].amount += s.amount;
+                        grouped[key].qty += (s.qty || 1);
                     });
                     const preservedSales = newSales.filter(s => new Date(s.timestamp).toDateString() === todayStr || s.isCompressed);
                     newSales = [...Object.values(grouped), ...preservedSales];
                     hasChanges = true;
                 }
 
-                // รวบยอดบิล "รายจ่าย" ที่ไม่ใช่วันนี้
                 const oldExpenses = newExpenses.filter(e => new Date(e.timestamp).toDateString() !== todayStr && !e.isCompressed);
                 if(oldExpenses.length > 0) {
                     const grouped = {};
@@ -150,9 +149,8 @@
                     setSales(newSales);
                     setExpenses(newExpenses);
                 }
-            }, []); // ทำงานรอบเดียวตอนเปิดแอป
+            }, []);
 
-            // ระบบเช็ควันเวลาปัจจุบันเสมอเมื่อพับแอปแล้วเปิดใหม่
             React.useEffect(() => {
                 const handleVisibilityChange = () => {
                     if (document.visibilityState === 'visible') {
@@ -164,7 +162,8 @@
                 return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
             }, [activeTab]);
 
-            const quickPrices = [50, 79, 35, 100, 150, 200];
+            // 🌟 อัปเดตราคาลัดตามที่ลูกค้าระบุ 🌟
+            const quickPrices = [35, 50, 79, 100, 150, 200];
             const expenseTypes = ['ค่าที่/ค่าไฟ', 'ค่าถุง/อุปกรณ์', 'ค่าเดินทาง', 'จิปาถะ', 'อื่นๆ'];
 
             const filterDate = new Date(currentDateFilter);
@@ -177,6 +176,7 @@
             const todaySales = sales.filter(s => isToday(s.timestamp));
             const todayExpenses = expenses.filter(e => isToday(e.timestamp));
             const totalSalesAmount = todaySales.reduce((sum, sale) => sum + sale.amount, 0);
+            const totalItemsSold = todaySales.reduce((sum, sale) => sum + (sale.qty || 1), 0);
             const totalExpenseAmount = todayExpenses.reduce((sum, exp) => sum + exp.amount, 0);
             const cashTotal = todaySales.filter(s => s.paymentMethod === 'cash').reduce((sum, s) => sum + s.amount, 0);
             const transferTotal = todaySales.filter(s => s.paymentMethod === 'transfer').reduce((sum, s) => sum + s.amount, 0);
@@ -191,7 +191,7 @@
             const monthlyTransferTotal = monthlySales.filter(s => s.paymentMethod === 'transfer').reduce((sum, s) => sum + s.amount, 0);
 
             const categoryRanking = monthlySales.reduce((acc, sale) => {
-                acc[sale.category] = (acc[sale.category] || 0) + sale.amount;
+                acc[sale.category] = (acc[sale.category] || 0) + (sale.qty || 1);
                 return acc;
             }, {});
             const topCategories = Object.entries(categoryRanking).sort((a, b) => b[1] - a[1]).slice(0, 3); 
@@ -232,11 +232,17 @@
                 
                 const now = new Date();
                 const newSale = {
-                    id: Date.now().toString(), amount, category: selectedCategory, paymentMethod: method, timestamp: now.toISOString(),
+                    id: Date.now().toString(), 
+                    amount, 
+                    qty: itemQty, 
+                    category: selectedCategory, 
+                    paymentMethod: method, 
+                    timestamp: now.toISOString(),
                 };
                 
                 setSales([newSale, ...sales]);
                 setCustomPrice('');
+                setItemQty(1);
                 setCurrentDateFilter(now.toDateString());
                 if (priceInputRef.current) priceInputRef.current.blur();
 
@@ -302,7 +308,7 @@
 
                     <div className="flex justify-between items-end mb-6 relative z-10">
                         <div>
-                            <p className="text-[11px] font-black text-white/80 tracking-widest uppercase mb-1 drop-shadow-sm">ยอดขายสุทธิ (วัน)</p>
+                            <p className="text-[11px] font-black text-white/80 tracking-widest uppercase mb-1 drop-shadow-sm">ยอดขายสุทธิ <span className="text-white/60 normal-case">({totalItemsSold} ชิ้น)</span></p>
                             <div className="flex items-baseline gap-1.5">
                                 <span className="text-2xl font-black text-white/90 drop-shadow-md">฿</span>
                                 <span className="text-6xl font-black tracking-tighter drop-shadow-lg">{totalSalesAmount.toLocaleString()}</span>
@@ -341,7 +347,10 @@
 
             const renderSellTab = () => (
                 <div className="p-4 pb-32 max-w-md mx-auto w-full animate-fade-in relative safe-pt">
+                
                 {renderDashboardHeader(true)}
+
+                {/* Category Grid */}
                 <div className="mb-6 bg-white/80 backdrop-blur-xl p-5 rounded-[32px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white">
                     <div className="flex items-center gap-2 mb-4 px-1">
                         <div className="bg-gradient-to-br from-fuchsia-500 to-purple-600 text-white p-1.5 rounded-xl shadow-md shadow-purple-500/30">
@@ -370,12 +379,27 @@
                     </div>
                 </div>
 
+                {/* Action Area */}
                 <div className="bg-white/80 backdrop-blur-xl p-5 rounded-[32px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white">
-                    <div className="flex items-center gap-2 mb-4 px-1">
-                        <div className="bg-gradient-to-br from-amber-400 to-orange-500 text-white p-1.5 rounded-xl shadow-md shadow-orange-500/30">
-                            <Icon name="tag" size={16} />
+                    
+                    <div className="flex items-center justify-between mb-5 bg-gradient-to-r from-slate-50 to-white p-2.5 rounded-[20px] border border-slate-100 shadow-sm">
+                        <div className="flex items-center gap-2 pl-2">
+                            <div className="bg-amber-100 text-amber-600 p-1.5 rounded-lg">
+                                <Icon name="tag" size={14} />
+                            </div>
+                            <span className="text-[13px] font-black text-slate-600">ระบุราคา / จำนวนชิ้น</span>
                         </div>
-                        <h3 className="text-[15px] font-black text-slate-800 tracking-tight">ระบุราคา</h3>
+                        <div className="flex items-center gap-3 bg-white p-1 rounded-2xl border border-slate-100 shadow-sm">
+                            <button 
+                                onClick={() => setItemQty(Math.max(1, itemQty - 1))} 
+                                className="w-10 h-10 rounded-[14px] bg-slate-50 hover:bg-slate-100 active:bg-slate-200 text-slate-600 font-black text-lg flex items-center justify-center transition-colors"
+                            >-</button>
+                            <span className="font-black text-xl text-purple-600 w-6 text-center">{itemQty}</span>
+                            <button 
+                                onClick={() => setItemQty(itemQty + 1)} 
+                                className="w-10 h-10 rounded-[14px] bg-purple-100 hover:bg-purple-200 active:bg-purple-300 text-purple-600 font-black text-lg flex items-center justify-center transition-colors"
+                            >+</button>
+                        </div>
                     </div>
 
                     <div className="relative mb-6 group">
@@ -407,7 +431,7 @@
                         <button
                         key={price}
                         onClick={() => handleQuickPriceClick(price)}
-                        className="py-3.5 rounded-2xl bg-gradient-to-b from-white to-slate-50 border border-slate-200 text-slate-700 font-black text-[15px] shadow-sm hover:shadow-md hover:border-blue-300 active:bg-slate-100 active:scale-95 transition-all select-none"
+                        className="py-3.5 rounded-2xl bg-gradient-to-b from-white to-slate-50 border border-slate-200 text-slate-700 font-black text-[15px] shadow-sm hover:shadow-md hover:border-purple-300 active:bg-slate-100 active:scale-95 transition-all select-none"
                         >
                         +{price}
                         </button>
@@ -539,7 +563,7 @@
                                 <div className="flex justify-between items-center mb-3 px-2">
                                     <h3 className="font-black text-slate-800 flex items-center text-[15px]">
                                         <div className="bg-emerald-100 text-emerald-500 p-1 rounded-lg mr-2"><Icon name="trending-up" size={14} /></div>
-                                        รายการขาย <span className="text-slate-400 ml-1 text-xs">({todaySales.length})</span>
+                                        รายการขาย <span className="text-slate-400 ml-1 text-xs">({todaySales.length} บิล)</span>
                                     </h3>
                                 </div>
 
@@ -561,7 +585,9 @@
                                                         </div>
                                                         <div className="flex flex-col">
                                                             <span className="font-black text-slate-800 text-[14px]">
-                                                                {sale.category} {sale.isCompressed && <span className="text-[10px] text-orange-500 ml-1">(รวบยอด)</span>}
+                                                                {sale.category} 
+                                                                {sale.qty > 1 && <span className="text-[12px] text-purple-600 ml-1.5 bg-purple-100 px-1.5 py-0.5 rounded-md">x{sale.qty}</span>}
+                                                                {sale.isCompressed && <span className="text-[10px] text-orange-500 ml-1">(รวบยอด)</span>}
                                                             </span>
                                                             <span className="text-[11px] text-slate-400 font-bold tracking-widest uppercase mt-0.5">
                                                                 {sale.isCompressed ? 'สรุปรายวัน' : new Date(sale.timestamp).toLocaleTimeString('th-TH', {hour: '2-digit', minute:'2-digit'})}
@@ -656,14 +682,14 @@
                         <div className="mb-6">
                             <h3 className="font-black text-slate-800 flex items-center text-[15px] mb-3 px-2">
                                 <div className="bg-amber-100 text-amber-500 p-1 rounded-lg mr-2"><Icon name="trophy" size={14} /></div>
-                                สินค้าขายดี (Top 3)
+                                สินค้าขายดี (Top 3) <span className="text-slate-400 ml-1 text-xs font-bold font-normal">นับตามชิ้น</span>
                             </h3>
                             <div className="bg-white/80 backdrop-blur-xl p-5 rounded-[28px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white flex gap-3">
                                 {topCategories.length > 0 ? topCategories.map((cat, index) => (
                                     <div key={cat[0]} className={`flex-1 rounded-2xl p-3 border ${index === 0 ? 'bg-gradient-to-br from-amber-50 to-orange-50 border-amber-200' : 'bg-slate-50 border-slate-100'}`}>
                                         <p className="text-[10px] font-black text-slate-400 mb-1">อันดับ {index+1}</p>
                                         <p className={`font-black text-[13px] truncate ${index === 0 ? 'text-amber-600' : 'text-slate-700'}`}>{cat[0]}</p>
-                                        <p className="font-bold text-[12px] text-slate-500 mt-1">฿{cat[1].toLocaleString()}</p>
+                                        <p className="font-bold text-[12px] text-slate-500 mt-1">{cat[1]} ชิ้น</p>
                                     </div>
                                 )) : (
                                     <p className="text-slate-400 text-sm font-bold text-center w-full py-2">ยังไม่มีข้อมูลสินค้า</p>
@@ -923,7 +949,7 @@
 
                 <div className="text-center mt-12 mb-8">
                     <p className="bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500 text-[12px] font-black uppercase tracking-widest mb-1">Market POS Pro</p>
-                    <p className="text-slate-400 text-[10px] font-bold tracking-wide">Version 19.0 Auto Compress</p>
+                    <p className="text-slate-400 text-[10px] font-bold tracking-wide">Version 21.0 Custom Prices</p>
                 </div>
                 </div>
             );
