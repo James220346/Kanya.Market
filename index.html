@@ -1,32 +1,30 @@
-<meta name='viewport' content='width=device-width, initial-scale=1'/>​<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Market POS Pro</title>
     
-    <!-- PWA & Mobile App Meta Tags (สำคัญมากสำหรับการเซฟหน้าจอ) -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="POS มือ2">
+    <meta name="apple-mobile-web-app-title" content="POS ร้าน JameS">
     <meta name="theme-color" content="#f0f4f8">
     
-    <link rel="apple-touch-icon" href="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23a855f7;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23ec4899;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='512' height='512' rx='112' fill='url(%23grad)'/%3E%3Cpath d='M160 192V160C160 106.981 202.981 64 256 64C309.019 64 352 106.981 352 160V192H416C433.673 192 448 206.327 448 224V416C448 433.673 433.673 448 416 448H96C78.3269 448 64 433.673 64 416V224C64 206.327 78.3269 192 96 192H160ZM224 192H288V160C288 142.327 273.673 128 256 128C238.327 128 224 142.327 224 160V192Z' fill='white'/%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" href="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='bg' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%238b5cf6' /%3E%3Cstop offset='100%25' stop-color='%23ec4899' /%3E%3C/linearGradient%3E%3ClinearGradient id='cloth' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23ffffff' /%3E%3Cstop offset='100%25' stop-color='%23e2e8f0' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='512' height='512' rx='120' fill='url(%23bg)'/%3E%3Cpath d='M150 140 C150 140 200 100 256 100 C312 100 362 140 362 140 L440 200 C450 210 440 240 420 240 L380 210 L380 400 C380 420 360 420 360 420 L152 420 C152 420 132 420 132 400 L132 210 L92 240 C72 240 62 210 72 200 Z' fill='url(%23cloth)' /%3E%3Ccircle cx='210' cy='250' r='20' fill='%231e293b'/%3E%3Ccircle cx='302' cy='250' r='20' fill='%231e293b'/%3E%3Ccircle cx='215' cy='243' r='6' fill='%23ffffff'/%3E%3Ccircle cx='307' cy='243' r='6' fill='%23ffffff'/%3E%3Cpath d='M236 270 Q 256 295 276 270' stroke='%231e293b' stroke-width='14' stroke-linecap='round' fill='transparent'/%3E%3Cellipse cx='170' cy='275' rx='18' ry='12' fill='%23ff9a9e' opacity='0.8'/%3E%3Cellipse cx='342' cy='275' rx='18' ry='12' fill='%23ff9a9e' opacity='0.8'/%3E%3C/svg%3E">
     
-    <!-- Dynamic Manifest -->
     <script>
         const manifest = {
             "name": "Market POS Pro",
-            "short_name": "POS มือ2",
+            "short_name": "POS ร้าน JameS",
             "description": "ระบบจัดการร้านผ้ามือสองหน้าตลาด",
-            "start_url": "./index.html",
+            "start_url": ".",
             "display": "standalone",
             "background_color": "#f0f4f8",
             "theme_color": "#a855f7",
             "icons": [
                 {
-                    "src": "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23a855f7;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23ec4899;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='512' height='512' rx='112' fill='url(%23grad)'/%3E%3Cpath d='M160 192V160C160 106.981 202.981 64 256 64C309.019 64 352 106.981 352 160V192H416C433.673 192 448 206.327 448 224V416C448 433.673 433.673 448 416 448H96C78.3269 448 64 433.673 64 416V224C64 206.327 78.3269 192 96 192H160ZM224 192H288V160C288 142.327 273.673 128 256 128C238.327 128 224 142.327 224 160V192Z' fill='white'/%3E%3C/svg%3E",
+                    "src": "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='bg' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%238b5cf6' /%3E%3Cstop offset='100%25' stop-color='%23ec4899' /%3E%3C/linearGradient%3E%3ClinearGradient id='cloth' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23ffffff' /%3E%3Cstop offset='100%25' stop-color='%23e2e8f0' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='512' height='512' rx='120' fill='url(%23bg)'/%3E%3Cpath d='M150 140 C150 140 200 100 256 100 C312 100 362 140 362 140 L440 200 C450 210 440 240 420 240 L380 210 L380 400 C380 420 360 420 360 420 L152 420 C152 420 132 420 132 400 L132 210 L92 240 C72 240 62 210 72 200 Z' fill='url(%23cloth)' /%3E%3Ccircle cx='210' cy='250' r='20' fill='%231e293b'/%3E%3Ccircle cx='302' cy='250' r='20' fill='%231e293b'/%3E%3Ccircle cx='215' cy='243' r='6' fill='%23ffffff'/%3E%3Ccircle cx='307' cy='243' r='6' fill='%23ffffff'/%3E%3Cpath d='M236 270 Q 256 295 276 270' stroke='%231e293b' stroke-width='14' stroke-linecap='round' fill='transparent'/%3E%3Cellipse cx='170' cy='275' rx='18' ry='12' fill='%23ff9a9e' opacity='0.8'/%3E%3Cellipse cx='342' cy='275' rx='18' ry='12' fill='%23ff9a9e' opacity='0.8'/%3E%3C/svg%3E",
                     "sizes": "512x512",
                     "type": "image/svg+xml",
                     "purpose": "any maskable"
@@ -66,9 +64,8 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: #f0f4f8;
             -webkit-tap-highlight-color: transparent;
-            overscroll-behavior-y: none; /* ป้องกันเด้งบน iOS */
+            overscroll-behavior-y: none;
         }
-        /* จัดการพื้นที่ขอบจอไอโฟน */
         .safe-pb { padding-bottom: env(safe-area-inset-bottom, 20px); }
         .safe-pt { padding-top: env(safe-area-inset-top, 20px); }
     </style>
@@ -103,12 +100,12 @@
         const App = () => {
             const [activeTab, setActiveTab] = React.useState('sell');
             
-            const [sales, setSales] = React.useState(() => JSON.parse(localStorage.getItem('pos_sales_v12')) || []);
-            const [expenses, setExpenses] = React.useState(() => JSON.parse(localStorage.getItem('pos_expenses_v12')) || []);
-            const [bales, setBales] = React.useState(() => JSON.parse(localStorage.getItem('pos_bales_v12')) || []);
-            const [settings, setSettings] = React.useState(() => JSON.parse(localStorage.getItem('pos_settings_v12')) || {
+            const [sales, setSales] = React.useState(() => JSON.parse(localStorage.getItem('pos_sales_v13')) || []);
+            const [expenses, setExpenses] = React.useState(() => JSON.parse(localStorage.getItem('pos_expenses_v13')) || []);
+            const [bales, setBales] = React.useState(() => JSON.parse(localStorage.getItem('pos_bales_v13')) || []);
+            const [settings, setSettings] = React.useState(() => JSON.parse(localStorage.getItem('pos_settings_v13')) || {
                 promptpayId: '',
-                shopName: 'ร้านของฉัน',
+                shopName: 'ร้านผ้า JameS',
                 defaultCategories: ['เสื้อยืด', 'เชิ้ต', 'กางเกง', 'ขาสั้น', 'แจ็คเก็ต', 'เดรส', 'กระเป๋า', 'อื่นๆ']
             });
 
@@ -122,10 +119,10 @@
 
             const priceInputRef = React.useRef(null);
 
-            React.useEffect(() => localStorage.setItem('pos_sales_v12', JSON.stringify(sales)), [sales]);
-            React.useEffect(() => localStorage.setItem('pos_expenses_v12', JSON.stringify(expenses)), [expenses]);
-            React.useEffect(() => localStorage.setItem('pos_bales_v12', JSON.stringify(bales)), [bales]);
-            React.useEffect(() => localStorage.setItem('pos_settings_v12', JSON.stringify(settings)), [settings]);
+            React.useEffect(() => localStorage.setItem('pos_sales_v13', JSON.stringify(sales)), [sales]);
+            React.useEffect(() => localStorage.setItem('pos_expenses_v13', JSON.stringify(expenses)), [expenses]);
+            React.useEffect(() => localStorage.setItem('pos_bales_v13', JSON.stringify(bales)), [bales]);
+            React.useEffect(() => localStorage.setItem('pos_settings_v13', JSON.stringify(settings)), [settings]);
 
             const quickPrices = [39, 50, 80, 100, 150, 200];
             const expenseTypes = ['ค่าที่/ค่าไฟ', 'ค่าถุง/อุปกรณ์', 'ค่าเดินทาง', 'จิปาถะ', 'อื่นๆ'];
@@ -730,7 +727,7 @@
 
                 <div className="text-center mt-12 mb-8">
                     <p className="bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500 text-[12px] font-black uppercase tracking-widest mb-1">Market POS Pro</p>
-                    <p className="text-slate-400 text-[10px] font-bold tracking-wide">Version 12.0 Web App</p>
+                    <p className="text-slate-400 text-[10px] font-bold tracking-wide">Version 13.0 Complete Edition</p>
                 </div>
                 </div>
             );
