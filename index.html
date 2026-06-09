@@ -3,20 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Market POS Pro</title>
+    <title>Market V21 Pro</title>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="POS ร้าน JameS">
+    <meta name="apple-mobile-web-app-title" content="Kanya Market">
     <meta name="theme-color" content="#f0f4f8">
     
     <link rel="apple-touch-icon" href="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='bg' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%238b5cf6' /%3E%3Cstop offset='100%25' stop-color='%23ec4899' /%3E%3C/linearGradient%3E%3ClinearGradient id='cloth' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23ffffff' /%3E%3Cstop offset='100%25' stop-color='%23e2e8f0' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='512' height='512' rx='120' fill='url(%23bg)'/%3E%3Cpath d='M150 140 C150 140 200 100 256 100 C312 100 362 140 362 140 L440 200 C450 210 440 240 420 240 L380 210 L380 400 C380 420 360 420 360 420 L152 420 C152 420 132 420 132 400 L132 210 L92 240 C72 240 62 210 72 200 Z' fill='url(%23cloth)' /%3E%3Ccircle cx='210' cy='250' r='20' fill='%231e293b'/%3E%3Ccircle cx='302' cy='250' r='20' fill='%231e293b'/%3E%3Ccircle cx='215' cy='243' r='6' fill='%23ffffff'/%3E%3Ccircle cx='307' cy='243' r='6' fill='%23ffffff'/%3E%3Cpath d='M236 270 Q 256 295 276 270' stroke='%231e293b' stroke-width='14' stroke-linecap='round' fill='transparent'/%3E%3Cellipse cx='170' cy='275' rx='18' ry='12' fill='%23ff9a9e' opacity='0.8'/%3E%3Cellipse cx='342' cy='275' rx='18' ry='12' fill='%23ff9a9e' opacity='0.8'/%3E%3C/svg%3E">
     
     <script>
         const manifest = {
-            "name": "Market POS Pro",
-            "short_name": "POS ร้าน JameS",
+            "name": "Market V21 Pro",
+            "short_name": "Kanya Market",
             "description": "ระบบจัดการร้านผ้ามือสองหน้าตลาด",
             "start_url": ".",
             "display": "standalone",
@@ -80,7 +80,7 @@
             const [expenses, setExpenses] = React.useState(() => JSON.parse(localStorage.getItem('pos_expenses_v21') || localStorage.getItem('pos_expenses_v20') || localStorage.getItem('pos_expenses_v19')) || []);
             const [bales, setBales] = React.useState(() => JSON.parse(localStorage.getItem('pos_bales_v21') || localStorage.getItem('pos_bales_v20') || localStorage.getItem('pos_bales_v19')) || []);
             const [settings, setSettings] = React.useState(() => JSON.parse(localStorage.getItem('pos_settings_v21') || localStorage.getItem('pos_settings_v20')) || {
-                promptpayId: '', shopName: 'ร้านผ้า JameS',
+                promptpayId: '', shopName: 'ร้านผ้า กัญญา💜',
                 defaultCategories: ['เสื้อยืด', 'เชิ้ต', 'กางเกง', 'ขาสั้น', 'เสื้อกล้าม', 'เดรส', 'กางเกงขายาว', 'อื่นๆ']
             });
 
