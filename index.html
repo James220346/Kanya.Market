@@ -80,7 +80,7 @@
             const [expenses, setExpenses] = React.useState(() => JSON.parse(localStorage.getItem('pos_expenses_v21') || localStorage.getItem('pos_expenses_v20') || localStorage.getItem('pos_expenses_v19')) || []);
             const [bales, setBales] = React.useState(() => JSON.parse(localStorage.getItem('pos_bales_v21') || localStorage.getItem('pos_bales_v20') || localStorage.getItem('pos_bales_v19')) || []);
             const [settings, setSettings] = React.useState(() => JSON.parse(localStorage.getItem('pos_settings_v21') || localStorage.getItem('pos_settings_v20')) || {
-                promptpayId: '', shopName: 'ร้านผ้า กัญญา💜',
+                promptpayId: '', shopName: 'ร้านผ้า กัญญา',
                 defaultCategories: ['เสื้อยืด', 'เชิ้ต', 'กางเกง', 'ขาสั้น', 'เสื้อกล้าม', 'เดรส', 'กางเกงขายาว', 'อื่นๆ']
             });
 
@@ -163,7 +163,7 @@
             }, [activeTab]);
 
             // 🌟 อัปเดตราคาลัดตามที่ลูกค้าระบุ 🌟
-            const quickPrices = [35, 50, 79, 100, 150, 200];
+            const quickPrices = [35, 50, 79,];
             const expenseTypes = ['ค่าที่/ค่าไฟ', 'ค่าถุง/อุปกรณ์', 'ค่าเดินทาง', 'จิปาถะ', 'อื่นๆ'];
 
             const filterDate = new Date(currentDateFilter);
