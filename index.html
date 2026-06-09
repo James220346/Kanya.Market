@@ -5,14 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Market POS Pro</title>
     
+    <!-- PWA & Mobile App Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="POS ร้าน JameS">
     <meta name="theme-color" content="#f0f4f8">
     
+    <!-- ไอค่อนสไตล์ Chibi Mascot น้องเสื้อยืดหน้ายิ้ม -->
     <link rel="apple-touch-icon" href="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='bg' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%238b5cf6' /%3E%3Cstop offset='100%25' stop-color='%23ec4899' /%3E%3C/linearGradient%3E%3ClinearGradient id='cloth' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23ffffff' /%3E%3Cstop offset='100%25' stop-color='%23e2e8f0' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='512' height='512' rx='120' fill='url(%23bg)'/%3E%3Cpath d='M150 140 C150 140 200 100 256 100 C312 100 362 140 362 140 L440 200 C450 210 440 240 420 240 L380 210 L380 400 C380 420 360 420 360 420 L152 420 C152 420 132 420 132 400 L132 210 L92 240 C72 240 62 210 72 200 Z' fill='url(%23cloth)' /%3E%3Ccircle cx='210' cy='250' r='20' fill='%231e293b'/%3E%3Ccircle cx='302' cy='250' r='20' fill='%231e293b'/%3E%3Ccircle cx='215' cy='243' r='6' fill='%23ffffff'/%3E%3Ccircle cx='307' cy='243' r='6' fill='%23ffffff'/%3E%3Cpath d='M236 270 Q 256 295 276 270' stroke='%231e293b' stroke-width='14' stroke-linecap='round' fill='transparent'/%3E%3Cellipse cx='170' cy='275' rx='18' ry='12' fill='%23ff9a9e' opacity='0.8'/%3E%3Cellipse cx='342' cy='275' rx='18' ry='12' fill='%23ff9a9e' opacity='0.8'/%3E%3C/svg%3E">
     
+    <!-- Dynamic Manifest -->
     <script>
         const manifest = {
             "name": "Market POS Pro",
@@ -53,10 +56,10 @@
         @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes zoomIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
         
-        .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
-        .animate-slide-up { animation: slideUp 0.4s ease-out forwards; }
-        .animate-slide-down { animation: slideDown 0.3s ease-out forwards; }
-        .animate-zoom-in { animation: zoomIn 0.3s ease-out forwards; }
+        .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
+        .animate-slide-up { animation: slideUp 0.3s ease-out forwards; }
+        .animate-slide-down { animation: slideDown 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .animate-zoom-in { animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
         
         input[type="number"] { font-size: 16px; }
         
@@ -100,10 +103,10 @@
         const App = () => {
             const [activeTab, setActiveTab] = React.useState('sell');
             
-            const [sales, setSales] = React.useState(() => JSON.parse(localStorage.getItem('pos_sales_v13')) || []);
-            const [expenses, setExpenses] = React.useState(() => JSON.parse(localStorage.getItem('pos_expenses_v13')) || []);
-            const [bales, setBales] = React.useState(() => JSON.parse(localStorage.getItem('pos_bales_v13')) || []);
-            const [settings, setSettings] = React.useState(() => JSON.parse(localStorage.getItem('pos_settings_v13')) || {
+            const [sales, setSales] = React.useState(() => JSON.parse(localStorage.getItem('pos_sales_v14')) || []);
+            const [expenses, setExpenses] = React.useState(() => JSON.parse(localStorage.getItem('pos_expenses_v14')) || []);
+            const [bales, setBales] = React.useState(() => JSON.parse(localStorage.getItem('pos_bales_v14')) || []);
+            const [settings, setSettings] = React.useState(() => JSON.parse(localStorage.getItem('pos_settings_v14')) || {
                 promptpayId: '',
                 shopName: 'ร้านผ้า JameS',
                 defaultCategories: ['เสื้อยืด', 'เชิ้ต', 'กางเกง', 'ขาสั้น', 'แจ็คเก็ต', 'เดรส', 'กระเป๋า', 'อื่นๆ']
@@ -111,18 +114,22 @@
 
             const [customPrice, setCustomPrice] = React.useState('');
             const [selectedCategory, setSelectedCategory] = React.useState(settings.defaultCategories[0]);
+            
+            // Modal States
             const [showExpenseModal, setShowExpenseModal] = React.useState(false);
+            const [deleteTarget, setDeleteTarget] = React.useState(null); // { type: 'sale'|'expense'|'bale'|'all', id?: string }
+            const [toast, setToast] = React.useState(null); // { message: string, type: 'success' | 'delete' }
+
             const [expenseForm, setExpenseForm] = React.useState({ name: '', amount: '', type: 'ค่าที่' });
             const [baleForm, setBaleForm] = React.useState({ name: '', cost: '', count: '' });
             const [currentDateFilter, setCurrentDateFilter] = React.useState(new Date().toDateString());
-            const [showSuccessToast, setShowSuccessToast] = React.useState(false);
 
             const priceInputRef = React.useRef(null);
 
-            React.useEffect(() => localStorage.setItem('pos_sales_v13', JSON.stringify(sales)), [sales]);
-            React.useEffect(() => localStorage.setItem('pos_expenses_v13', JSON.stringify(expenses)), [expenses]);
-            React.useEffect(() => localStorage.setItem('pos_bales_v13', JSON.stringify(bales)), [bales]);
-            React.useEffect(() => localStorage.setItem('pos_settings_v13', JSON.stringify(settings)), [settings]);
+            React.useEffect(() => localStorage.setItem('pos_sales_v14', JSON.stringify(sales)), [sales]);
+            React.useEffect(() => localStorage.setItem('pos_expenses_v14', JSON.stringify(expenses)), [expenses]);
+            React.useEffect(() => localStorage.setItem('pos_bales_v14', JSON.stringify(bales)), [bales]);
+            React.useEffect(() => localStorage.setItem('pos_settings_v14', JSON.stringify(settings)), [settings]);
 
             const quickPrices = [39, 50, 80, 100, 150, 200];
             const expenseTypes = ['ค่าที่/ค่าไฟ', 'ค่าถุง/อุปกรณ์', 'ค่าเดินทาง', 'จิปาถะ', 'อื่นๆ'];
@@ -137,6 +144,11 @@
             const cashTotal = todaySales.filter(s => s.paymentMethod === 'cash').reduce((sum, s) => sum + s.amount, 0);
             const transferTotal = todaySales.filter(s => s.paymentMethod === 'transfer').reduce((sum, s) => sum + s.amount, 0);
             const netProfit = totalSalesAmount - totalExpenseAmount;
+
+            const showToast = (message, type = 'success') => {
+                setToast({ message, type });
+                setTimeout(() => setToast(null), 2000);
+            };
 
             const handlePriceChange = (e) => setCustomPrice(e.target.value);
 
@@ -155,19 +167,18 @@
                 if (!amount || isNaN(amount) || amount <= 0) return;
                 
                 const newSale = {
-                id: Date.now().toString(),
-                amount,
-                category: selectedCategory,
-                paymentMethod: method,
-                timestamp: new Date().toISOString(),
+                    id: Date.now().toString(),
+                    amount,
+                    category: selectedCategory,
+                    paymentMethod: method,
+                    timestamp: new Date().toISOString(),
                 };
                 
                 setSales([newSale, ...sales]);
                 setCustomPrice('');
                 if (priceInputRef.current) priceInputRef.current.blur();
 
-                setShowSuccessToast(true);
-                setTimeout(() => setShowSuccessToast(false), 1500);
+                showToast('บันทึกยอดสำเร็จ!', 'success');
             };
 
             const handleCategoryClick = (cat) => setSelectedCategory(cat);
@@ -176,37 +187,52 @@
                 e.preventDefault();
                 if (!expenseForm.name || !expenseForm.amount) return;
                 setExpenses([{
-                id: Date.now().toString(),
-                name: expenseForm.name,
-                amount: parseFloat(expenseForm.amount),
-                type: expenseForm.type,
-                timestamp: new Date().toISOString(),
+                    id: Date.now().toString(),
+                    name: expenseForm.name,
+                    amount: parseFloat(expenseForm.amount),
+                    type: expenseForm.type,
+                    timestamp: new Date().toISOString(),
                 }, ...expenses]);
                 setShowExpenseModal(false);
                 setExpenseForm({ name: '', amount: '', type: 'ค่าที่' });
+                showToast('บันทึกรายจ่ายสำเร็จ', 'success');
             };
 
             const handleAddBale = (e) => {
                 e.preventDefault();
                 if (!baleForm.name || !baleForm.cost) return;
                 setBales([{
-                id: Date.now().toString(),
-                name: baleForm.name,
-                cost: parseFloat(baleForm.cost),
-                estimatedCount: parseInt(baleForm.count) || 0,
-                timestamp: new Date().toISOString(),
-                status: 'active'
+                    id: Date.now().toString(),
+                    name: baleForm.name,
+                    cost: parseFloat(baleForm.cost),
+                    estimatedCount: parseInt(baleForm.count) || 0,
+                    timestamp: new Date().toISOString(),
+                    status: 'active'
                 }, ...bales]);
                 setBaleForm({ name: '', cost: '', count: '' });
+                showToast('บันทึกกระสอบใหม่สำเร็จ', 'success');
             };
 
-            const deleteItem = (type, id) => {
-                if (!confirm('ยืนยันการลบรายการนี้?')) return;
+            // 🔑 ระบบลบแบบใหม่ (ใช้ Modal แทน confirm)
+            const executeDelete = () => {
+                if (!deleteTarget) return;
+                const { type, id } = deleteTarget;
+                
                 if (type === 'sale') setSales(sales.filter(s => s.id !== id));
                 if (type === 'expense') setExpenses(expenses.filter(e => e.id !== id));
                 if (type === 'bale') setBales(bales.filter(b => b.id !== id));
+                if (type === 'all') {
+                    setSales([]);
+                    setExpenses([]);
+                    setBales([]);
+                }
+                
+                setDeleteTarget(null); // ปิด Modal
+                showToast(type === 'all' ? 'ล้างข้อมูลระบบเรียบร้อย' : 'ลบรายการสำเร็จ', 'delete');
             };
 
+
+            // --- UI Components ---
             const renderDashboardHeader = (showTitle = true) => (
                 <div className="bg-gradient-to-br from-[#4158D0] via-[#C850C0] to-[#FFCC70] text-white rounded-[32px] p-6 shadow-[0_15px_30px_-10px_rgba(200,80,192,0.5)] mb-6 relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-white/20 rounded-full blur-3xl -translate-y-20 translate-x-10 pointer-events-none mix-blend-overlay"></div>
@@ -271,14 +297,6 @@
             const renderSellTab = () => (
                 <div className="p-4 pb-32 max-w-md mx-auto w-full animate-fade-in relative safe-pt">
                 
-                {showSuccessToast && (
-                    <div className="absolute top-2 left-1/2 -translate-x-1/2 z-50 animate-slide-down">
-                        <div className="bg-gradient-to-r from-[#00b09b] to-[#96c93d] text-white px-5 py-3 rounded-full shadow-[0_10px_20px_rgba(0,176,155,0.3)] flex items-center gap-2.5 text-sm font-black border border-white/20">
-                            <Icon name="check-circle-2" size={18} className="text-white drop-shadow-sm" /> บันทึกยอดสำเร็จ!
-                        </div>
-                    </div>
-                )}
-
                 {renderDashboardHeader(true)}
 
                 {/* Category Grid */}
@@ -340,7 +358,7 @@
                         onClick={handleClearPriceClick}
                         className="absolute right-4 top-1/2 -translate-y-1/2 bg-rose-500 text-white rounded-full p-2.5 shadow-md shadow-rose-500/30 active:scale-90 transition-all z-20"
                         >
-                        <Icon name="trash-2" size={18} />
+                        <Icon name="delete" size={18} />
                         </button>
                     )}
                     </div>
@@ -446,7 +464,7 @@
                                             </div>
                                             <div className="flex items-center gap-4">
                                                 <span className="font-black text-rose-500 text-[16px] drop-shadow-sm">-฿{exp.amount}</span>
-                                                <button onClick={() => deleteItem('expense', exp.id)} className="text-slate-300 hover:text-rose-500 bg-slate-50 hover:bg-rose-50 p-2 rounded-xl transition-colors">
+                                                <button onClick={() => setDeleteTarget({ type: 'expense', id: exp.id })} className="text-slate-300 hover:text-rose-500 bg-slate-50 hover:bg-rose-50 p-2 rounded-xl transition-colors">
                                                     <Icon name="trash-2" size={16}/>
                                                 </button>
                                             </div>
@@ -490,7 +508,7 @@
                                             </div>
                                             <div className="flex items-center gap-4">
                                                 <span className="font-black text-slate-800 text-[18px]">฿{sale.amount}</span>
-                                                <button onClick={() => deleteItem('sale', sale.id)} className="text-slate-300 hover:text-rose-500 bg-slate-50 hover:bg-rose-50 p-2 rounded-xl transition-colors">
+                                                <button onClick={() => setDeleteTarget({ type: 'sale', id: sale.id })} className="text-slate-300 hover:text-rose-500 bg-slate-50 hover:bg-rose-50 p-2 rounded-xl transition-colors">
                                                     <Icon name="trash-2" size={16} />
                                                 </button>
                                             </div>
@@ -588,7 +606,7 @@
                                 <h4 className="font-black text-slate-800 text-[15px] tracking-tight">{bale.name}</h4>
                                 <p className="text-[10px] text-slate-400 font-bold tracking-widest uppercase mt-1">{new Date(bale.timestamp).toLocaleDateString('th-TH')}</p>
                             </div>
-                            <button onClick={() => deleteItem('bale', bale.id)} className="text-slate-300 hover:text-rose-500 bg-slate-50 hover:bg-rose-50 p-2 rounded-xl transition-colors"><Icon name="trash-2" size={14}/></button>
+                            <button onClick={() => setDeleteTarget({ type: 'bale', id: bale.id })} className="text-slate-300 hover:text-rose-500 bg-slate-50 hover:bg-rose-50 p-2 rounded-xl transition-colors"><Icon name="trash-2" size={14}/></button>
                             </div>
                             <div className="flex justify-between items-center text-xs pl-2 pt-4 border-t border-slate-50">
                             <div className="flex flex-col">
@@ -711,14 +729,7 @@
 
                 <div className="mt-8">
                     <button 
-                        onClick={() => {
-                        if(confirm('⚠️ ยืนยันการล้างข้อมูลทั้งหมด? (ข้อมูลจะหายไปทั้งหมดและกู้คืนไม่ได้)')) {
-                            setSales([]);
-                            setExpenses([]);
-                            setBales([]);
-                            alert('ล้างข้อมูลเรียบร้อยแล้ว');
-                        }
-                        }}
+                        onClick={() => setDeleteTarget({ type: 'all' })}
                         className="w-full bg-white border border-rose-100 text-rose-500 font-black py-4 rounded-[24px] text-[14px] hover:bg-rose-50 active:scale-95 transition-all flex items-center justify-center gap-2 shadow-[0_8px_20px_rgb(225,29,72,0.1)]"
                     >
                         <Icon name="trash-2" size={18} strokeWidth={3}/> ล้างข้อมูลระบบ
@@ -727,7 +738,7 @@
 
                 <div className="text-center mt-12 mb-8">
                     <p className="bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500 text-[12px] font-black uppercase tracking-widest mb-1">Market POS Pro</p>
-                    <p className="text-slate-400 text-[10px] font-bold tracking-wide">Version 13.0 Complete Edition</p>
+                    <p className="text-slate-400 text-[10px] font-bold tracking-wide">Version 14.0 Premium Modal</p>
                 </div>
                 </div>
             );
@@ -740,6 +751,20 @@
                     {/* Decorative Background Blob */}
                     <div className="fixed top-0 left-0 w-full h-96 bg-gradient-to-b from-blue-100/50 to-transparent pointer-events-none z-[-1]"></div>
 
+                    {/* Global Toast Notification */}
+                    {toast && (
+                        <div className="fixed top-[env(safe-area-inset-top,20px)] left-1/2 -translate-x-1/2 z-[100] animate-slide-down pointer-events-none">
+                            <div className={`px-5 py-3 rounded-full flex items-center gap-2.5 text-sm font-black border shadow-lg ${
+                                toast.type === 'delete' 
+                                ? 'bg-slate-800 text-white shadow-[0_10px_20px_rgba(15,23,42,0.3)] border-slate-700' 
+                                : 'bg-gradient-to-r from-[#00b09b] to-[#96c93d] text-white shadow-[0_10px_20px_rgba(0,176,155,0.3)] border-white/20'
+                            }`}>
+                                <Icon name={toast.type === 'delete' ? 'trash-2' : 'check-circle-2'} size={18} className="text-white drop-shadow-sm" /> 
+                                {toast.message}
+                            </div>
+                        </div>
+                    )}
+
                     {/* Main Content Area */}
                     <div className="flex-grow z-0">
                     {activeTab === 'sell' && renderSellTab()}
@@ -748,6 +773,44 @@
                     {activeTab === 'stock' && renderStockTab()}
                     {activeTab === 'settings' && renderSettingsTab()}
                     </div>
+
+                    {/* 🌟 NEW: Custom Delete Confirmation Modal 🌟 */}
+                    {deleteTarget && (
+                    <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[70] flex items-center justify-center p-4 animate-fade-in">
+                        <div className="bg-white/95 backdrop-blur-xl rounded-[40px] w-full max-w-[320px] p-6 shadow-[0_20px_50px_rgba(0,0,0,0.2)] animate-zoom-in border border-white text-center">
+                            
+                            <div className="w-20 h-20 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-5 shadow-inner">
+                                <Icon name={deleteTarget.type === 'all' ? "alert-triangle" : "trash-2"} size={36} className="text-rose-500 drop-shadow-sm" />
+                            </div>
+                            
+                            <h3 className="text-2xl font-black mb-2 text-slate-800 tracking-tight">
+                                {deleteTarget.type === 'all' ? 'ล้างข้อมูลทั้งหมด?' : 'ยืนยันการลบ?'}
+                            </h3>
+                            
+                            <p className="text-slate-500 text-[13px] font-medium mb-8 leading-relaxed px-2">
+                                {deleteTarget.type === 'all' 
+                                    ? 'ข้อมูลการขาย รายจ่าย และประวัติกระสอบทั้งหมดจะถูกลบ และไม่สามารถกู้คืนได้' 
+                                    : 'คุณต้องการลบรายการนี้ใช่หรือไม่? ข้อมูลนี้จะไม่สามารถกู้คืนได้'}
+                            </p>
+                            
+                            <div className="flex gap-3">
+                                <button 
+                                    onClick={() => setDeleteTarget(null)} 
+                                    className="flex-1 py-4 bg-slate-100 text-slate-600 font-black rounded-[20px] hover:bg-slate-200 transition-colors"
+                                >
+                                    ยกเลิก
+                                </button>
+                                <button 
+                                    onClick={executeDelete} 
+                                    className="flex-1 py-4 bg-gradient-to-r from-rose-500 to-pink-500 text-white font-black rounded-[20px] active:scale-95 transition-all shadow-[0_8px_20px_rgba(244,63,94,0.3)]"
+                                >
+                                    ลบข้อมูล
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+                    )}
 
                     {/* Expense Modal */}
                     {showExpenseModal && (
@@ -785,8 +848,8 @@
                             </div>
                             </div>
                             <div className="flex gap-3 pt-6">
-                            <button type="button" onClick={() => setShowExpenseModal(false)} className="flex-1 py-4 bg-slate-100 text-slate-600 font-black rounded-2xl hover:bg-slate-200 transition-colors">ยกเลิก</button>
-                            <button type="submit" className="flex-1 py-4 bg-gradient-to-r from-rose-500 to-pink-500 text-white font-black rounded-2xl active:scale-95 transition-all shadow-[0_8px_20px_rgba(244,63,94,0.3)]">บันทึก</button>
+                            <button type="button" onClick={() => setShowExpenseModal(false)} className="flex-1 py-4 bg-slate-100 text-slate-600 font-black rounded-[20px] hover:bg-slate-200 transition-colors">ยกเลิก</button>
+                            <button type="submit" className="flex-1 py-4 bg-gradient-to-r from-rose-500 to-pink-500 text-white font-black rounded-[20px] active:scale-95 transition-all shadow-[0_8px_20px_rgba(244,63,94,0.3)]">บันทึก</button>
                             </div>
                         </form>
                         </div>
