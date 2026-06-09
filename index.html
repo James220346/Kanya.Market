@@ -9,7 +9,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="POS ร้าน JameS">
+    <meta name="apple-mobile-web-app-title" content="ร้านผ้ากัญญา">
     <meta name="theme-color" content="#f0f4f8">
     
     <!-- ไอค่อนสไตล์ Chibi Mascot น้องเสื้อยืดหน้ายิ้ม -->
@@ -19,7 +19,7 @@
     <script>
         const manifest = {
             "name": "Market POS Pro",
-            "short_name": "POS ร้าน JameS",
+            "short_name": "ร้านผ้ากัญญา",
             "description": "ระบบจัดการร้านผ้ามือสองหน้าตลาด",
             "start_url": ".",
             "display": "standalone",
@@ -108,8 +108,8 @@
             const [bales, setBales] = React.useState(() => JSON.parse(localStorage.getItem('pos_bales_v14')) || []);
             const [settings, setSettings] = React.useState(() => JSON.parse(localStorage.getItem('pos_settings_v14')) || {
                 promptpayId: '',
-                shopName: 'ร้านผ้า JameS',
-                defaultCategories: ['เสื้อยืด', 'เชิ้ต', 'กางเกง', 'ขาสั้น', 'แจ็คเก็ต', 'เดรส', 'กระเป๋า', 'อื่นๆ']
+                shopName: 'ร้านผ้ากัญญา',
+                defaultCategories: ['เสื้อยืด', 'เชิ้ต', 'กางเกง', 'ขาสั้น', 'เสื้อกล้าม', 'เดรส', 'อื่นๆ']
             });
 
             const [customPrice, setCustomPrice] = React.useState('');
@@ -131,7 +131,7 @@
             React.useEffect(() => localStorage.setItem('pos_bales_v14', JSON.stringify(bales)), [bales]);
             React.useEffect(() => localStorage.setItem('pos_settings_v14', JSON.stringify(settings)), [settings]);
 
-            const quickPrices = [39, 50, 80, 100, 150, 200];
+            const quickPrices = [50, 69, 79, 100, 150, 200];
             const expenseTypes = ['ค่าที่/ค่าไฟ', 'ค่าถุง/อุปกรณ์', 'ค่าเดินทาง', 'จิปาถะ', 'อื่นๆ'];
 
             const isToday = (dateString) => new Date(dateString).toDateString() === currentDateFilter;
