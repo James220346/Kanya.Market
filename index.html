@@ -1,0 +1,838 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/>​<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Market POS Pro</title>
+    
+    <!-- PWA & Mobile App Meta Tags (สำคัญมากสำหรับการเซฟหน้าจอ) -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="POS มือ2">
+    <meta name="theme-color" content="#f0f4f8">
+    
+    <link rel="apple-touch-icon" href="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23a855f7;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23ec4899;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='512' height='512' rx='112' fill='url(%23grad)'/%3E%3Cpath d='M160 192V160C160 106.981 202.981 64 256 64C309.019 64 352 106.981 352 160V192H416C433.673 192 448 206.327 448 224V416C448 433.673 433.673 448 416 448H96C78.3269 448 64 433.673 64 416V224C64 206.327 78.3269 192 96 192H160ZM224 192H288V160C288 142.327 273.673 128 256 128C238.327 128 224 142.327 224 160V192Z' fill='white'/%3E%3C/svg%3E">
+    
+    <!-- Dynamic Manifest -->
+    <script>
+        const manifest = {
+            "name": "Market POS Pro",
+            "short_name": "POS มือ2",
+            "description": "ระบบจัดการร้านผ้ามือสองหน้าตลาด",
+            "start_url": "./index.html",
+            "display": "standalone",
+            "background_color": "#f0f4f8",
+            "theme_color": "#a855f7",
+            "icons": [
+                {
+                    "src": "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23a855f7;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23ec4899;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='512' height='512' rx='112' fill='url(%23grad)'/%3E%3Cpath d='M160 192V160C160 106.981 202.981 64 256 64C309.019 64 352 106.981 352 160V192H416C433.673 192 448 206.327 448 224V416C448 433.673 433.673 448 416 448H96C78.3269 448 64 433.673 64 416V224C64 206.327 78.3269 192 96 192H160ZM224 192H288V160C288 142.327 273.673 128 256 128C238.327 128 224 142.327 224 160V192Z' fill='white'/%3E%3C/svg%3E",
+                    "sizes": "512x512",
+                    "type": "image/svg+xml",
+                    "purpose": "any maskable"
+                }
+            ]
+        };
+        const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+        const link = document.createElement('link');
+        link.rel = 'manifest';
+        link.href = URL.createObjectURL(blob);
+        document.head.appendChild(link);
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes zoomIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        
+        .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        .animate-slide-up { animation: slideUp 0.4s ease-out forwards; }
+        .animate-slide-down { animation: slideDown 0.3s ease-out forwards; }
+        .animate-zoom-in { animation: zoomIn 0.3s ease-out forwards; }
+        
+        input[type="number"] { font-size: 16px; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f0f4f8;
+            -webkit-tap-highlight-color: transparent;
+            overscroll-behavior-y: none; /* ป้องกันเด้งบน iOS */
+        }
+        /* จัดการพื้นที่ขอบจอไอโฟน */
+        .safe-pb { padding-bottom: env(safe-area-inset-bottom, 20px); }
+        .safe-pt { padding-top: env(safe-area-inset-top, 20px); }
+    </style>
+</head>
+<body class="selection:bg-purple-200">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const Icon = ({ name, ...props }) => {
+            const iconRef = React.useRef(null);
+            React.useEffect(() => {
+                if (iconRef.current) {
+                    iconRef.current.innerHTML = '';
+                    const svgElement = document.createElement('i');
+                    svgElement.setAttribute('data-lucide', name);
+                    iconRef.current.appendChild(svgElement);
+                    lucide.createIcons({
+                        root: iconRef.current,
+                        attrs: {
+                            class: props.className || '',
+                            width: props.size || 24,
+                            height: props.size || 24,
+                            stroke: props.color || 'currentColor',
+                            'stroke-width': props.strokeWidth || 2
+                        }
+                    });
+                }
+            }, [name, props.className, props.size, props.color, props.strokeWidth]);
+            return <span ref={iconRef} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}></span>;
+        };
+
+        const App = () => {
+            const [activeTab, setActiveTab] = React.useState('sell');
+            
+            const [sales, setSales] = React.useState(() => JSON.parse(localStorage.getItem('pos_sales_v12')) || []);
+            const [expenses, setExpenses] = React.useState(() => JSON.parse(localStorage.getItem('pos_expenses_v12')) || []);
+            const [bales, setBales] = React.useState(() => JSON.parse(localStorage.getItem('pos_bales_v12')) || []);
+            const [settings, setSettings] = React.useState(() => JSON.parse(localStorage.getItem('pos_settings_v12')) || {
+                promptpayId: '',
+                shopName: 'ร้านของฉัน',
+                defaultCategories: ['เสื้อยืด', 'เชิ้ต', 'กางเกง', 'ขาสั้น', 'แจ็คเก็ต', 'เดรส', 'กระเป๋า', 'อื่นๆ']
+            });
+
+            const [customPrice, setCustomPrice] = React.useState('');
+            const [selectedCategory, setSelectedCategory] = React.useState(settings.defaultCategories[0]);
+            const [showExpenseModal, setShowExpenseModal] = React.useState(false);
+            const [expenseForm, setExpenseForm] = React.useState({ name: '', amount: '', type: 'ค่าที่' });
+            const [baleForm, setBaleForm] = React.useState({ name: '', cost: '', count: '' });
+            const [currentDateFilter, setCurrentDateFilter] = React.useState(new Date().toDateString());
+            const [showSuccessToast, setShowSuccessToast] = React.useState(false);
+
+            const priceInputRef = React.useRef(null);
+
+            React.useEffect(() => localStorage.setItem('pos_sales_v12', JSON.stringify(sales)), [sales]);
+            React.useEffect(() => localStorage.setItem('pos_expenses_v12', JSON.stringify(expenses)), [expenses]);
+            React.useEffect(() => localStorage.setItem('pos_bales_v12', JSON.stringify(bales)), [bales]);
+            React.useEffect(() => localStorage.setItem('pos_settings_v12', JSON.stringify(settings)), [settings]);
+
+            const quickPrices = [39, 50, 80, 100, 150, 200];
+            const expenseTypes = ['ค่าที่/ค่าไฟ', 'ค่าถุง/อุปกรณ์', 'ค่าเดินทาง', 'จิปาถะ', 'อื่นๆ'];
+
+            const isToday = (dateString) => new Date(dateString).toDateString() === currentDateFilter;
+            const todaySales = sales.filter(s => isToday(s.timestamp));
+            const todayExpenses = expenses.filter(e => isToday(e.timestamp));
+
+            const totalSalesAmount = todaySales.reduce((sum, sale) => sum + sale.amount, 0);
+            const totalExpenseAmount = todayExpenses.reduce((sum, exp) => sum + exp.amount, 0);
+            
+            const cashTotal = todaySales.filter(s => s.paymentMethod === 'cash').reduce((sum, s) => sum + s.amount, 0);
+            const transferTotal = todaySales.filter(s => s.paymentMethod === 'transfer').reduce((sum, s) => sum + s.amount, 0);
+            const netProfit = totalSalesAmount - totalExpenseAmount;
+
+            const handlePriceChange = (e) => setCustomPrice(e.target.value);
+
+            const handleQuickPriceClick = (price) => {
+                setCustomPrice(price.toString());
+                if (priceInputRef.current) priceInputRef.current.blur();
+            };
+
+            const handleClearPriceClick = () => {
+                setCustomPrice('');
+                if (priceInputRef.current) priceInputRef.current.blur();
+            };
+
+            const handleAddSaleClick = (method) => {
+                const amount = parseFloat(customPrice);
+                if (!amount || isNaN(amount) || amount <= 0) return;
+                
+                const newSale = {
+                id: Date.now().toString(),
+                amount,
+                category: selectedCategory,
+                paymentMethod: method,
+                timestamp: new Date().toISOString(),
+                };
+                
+                setSales([newSale, ...sales]);
+                setCustomPrice('');
+                if (priceInputRef.current) priceInputRef.current.blur();
+
+                setShowSuccessToast(true);
+                setTimeout(() => setShowSuccessToast(false), 1500);
+            };
+
+            const handleCategoryClick = (cat) => setSelectedCategory(cat);
+
+            const handleAddExpense = (e) => {
+                e.preventDefault();
+                if (!expenseForm.name || !expenseForm.amount) return;
+                setExpenses([{
+                id: Date.now().toString(),
+                name: expenseForm.name,
+                amount: parseFloat(expenseForm.amount),
+                type: expenseForm.type,
+                timestamp: new Date().toISOString(),
+                }, ...expenses]);
+                setShowExpenseModal(false);
+                setExpenseForm({ name: '', amount: '', type: 'ค่าที่' });
+            };
+
+            const handleAddBale = (e) => {
+                e.preventDefault();
+                if (!baleForm.name || !baleForm.cost) return;
+                setBales([{
+                id: Date.now().toString(),
+                name: baleForm.name,
+                cost: parseFloat(baleForm.cost),
+                estimatedCount: parseInt(baleForm.count) || 0,
+                timestamp: new Date().toISOString(),
+                status: 'active'
+                }, ...bales]);
+                setBaleForm({ name: '', cost: '', count: '' });
+            };
+
+            const deleteItem = (type, id) => {
+                if (!confirm('ยืนยันการลบรายการนี้?')) return;
+                if (type === 'sale') setSales(sales.filter(s => s.id !== id));
+                if (type === 'expense') setExpenses(expenses.filter(e => e.id !== id));
+                if (type === 'bale') setBales(bales.filter(b => b.id !== id));
+            };
+
+            const renderDashboardHeader = (showTitle = true) => (
+                <div className="bg-gradient-to-br from-[#4158D0] via-[#C850C0] to-[#FFCC70] text-white rounded-[32px] p-6 shadow-[0_15px_30px_-10px_rgba(200,80,192,0.5)] mb-6 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-white/20 rounded-full blur-3xl -translate-y-20 translate-x-10 pointer-events-none mix-blend-overlay"></div>
+                    <div className="absolute bottom-0 left-0 w-48 h-48 bg-black/10 rounded-full blur-2xl translate-y-10 -translate-x-5 pointer-events-none"></div>
+
+                    {showTitle && (
+                    <div className="flex justify-between items-center mb-6 relative z-10">
+                        <div className="flex items-center gap-2">
+                            <div className="bg-white/20 p-2 rounded-xl backdrop-blur-md border border-white/30 shadow-inner">
+                                <Icon name="store" size={18} className="text-white drop-shadow-md" />
+                            </div>
+                            <h1 className="text-lg font-black tracking-wide drop-shadow-md">{settings.shopName}</h1>
+                        </div>
+                        <div className="bg-black/20 px-3 py-1.5 rounded-full flex items-center text-xs font-bold backdrop-blur-md text-white border border-white/10 shadow-inner">
+                            <Icon name="calendar" size={12} className="mr-1.5" />
+                            {isToday(currentDateFilter) ? 'วันนี้' : new Date(currentDateFilter).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' })}
+                        </div>
+                    </div>
+                    )}
+
+                    <div className="flex justify-between items-end mb-6 relative z-10">
+                        <div>
+                            <p className="text-[11px] font-black text-white/80 tracking-widest uppercase mb-1 drop-shadow-sm">ยอดขายสุทธิ</p>
+                            <div className="flex items-baseline gap-1.5">
+                                <span className="text-2xl font-black text-white/90 drop-shadow-md">฿</span>
+                                <span className="text-6xl font-black tracking-tighter drop-shadow-lg">{totalSalesAmount.toLocaleString()}</span>
+                            </div>
+                        </div>
+                        <div className="text-right">
+                            <p className="text-[11px] font-black text-white/80 tracking-widest uppercase mb-1 drop-shadow-sm">กำไร</p>
+                            <div className={`text-2xl font-black drop-shadow-md ${netProfit >= 0 ? 'text-[#84ffc9]' : 'text-[#ff9a9e]'}`}>
+                                {netProfit >= 0 ? '+' : ''}{netProfit.toLocaleString()}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="flex gap-3 relative z-10">
+                        <div className="flex-1 bg-white/20 backdrop-blur-md rounded-2xl p-3 flex items-center gap-3 border border-white/30 shadow-[0_8px_16px_rgba(0,0,0,0.1)] relative overflow-hidden">
+                            <div className="absolute inset-0 bg-gradient-to-r from-[#00b09b]/50 to-[#96c93d]/50 mix-blend-overlay"></div>
+                            <div className="w-8 h-8 rounded-full bg-white/90 flex items-center justify-center text-[#00b09b] shadow-md z-10">
+                                <Icon name="banknote" size={16} className="drop-shadow-sm" />
+                            </div>
+                            <div className="z-10">
+                                <p className="text-[10px] text-white/90 font-black uppercase tracking-wider">เงินสด</p>
+                                <p className="text-[15px] font-black drop-shadow-md">฿{cashTotal.toLocaleString()}</p>
+                            </div>
+                        </div>
+                        <div className="flex-1 bg-white/20 backdrop-blur-md rounded-2xl p-3 flex items-center gap-3 border border-white/30 shadow-[0_8px_16px_rgba(0,0,0,0.1)] relative overflow-hidden">
+                            <div className="absolute inset-0 bg-gradient-to-r from-[#1e3c72]/50 to-[#2a5298]/50 mix-blend-overlay"></div>
+                            <div className="w-8 h-8 rounded-full bg-white/90 flex items-center justify-center text-[#2a5298] shadow-md z-10">
+                                <Icon name="credit-card" size={16} className="drop-shadow-sm" />
+                            </div>
+                            <div className="z-10">
+                                <p className="text-[10px] text-white/90 font-black uppercase tracking-wider">โอนเงิน</p>
+                                <p className="text-[15px] font-black drop-shadow-md">฿{transferTotal.toLocaleString()}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+
+            const renderSellTab = () => (
+                <div className="p-4 pb-32 max-w-md mx-auto w-full animate-fade-in relative safe-pt">
+                
+                {showSuccessToast && (
+                    <div className="absolute top-2 left-1/2 -translate-x-1/2 z-50 animate-slide-down">
+                        <div className="bg-gradient-to-r from-[#00b09b] to-[#96c93d] text-white px-5 py-3 rounded-full shadow-[0_10px_20px_rgba(0,176,155,0.3)] flex items-center gap-2.5 text-sm font-black border border-white/20">
+                            <Icon name="check-circle-2" size={18} className="text-white drop-shadow-sm" /> บันทึกยอดสำเร็จ!
+                        </div>
+                    </div>
+                )}
+
+                {renderDashboardHeader(true)}
+
+                {/* Category Grid */}
+                <div className="mb-6 bg-white/80 backdrop-blur-xl p-5 rounded-[32px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white">
+                    <div className="flex items-center gap-2 mb-4 px-1">
+                        <div className="bg-gradient-to-br from-fuchsia-500 to-purple-600 text-white p-1.5 rounded-xl shadow-md shadow-purple-500/30">
+                            <Icon name="shirt" size={16} />
+                        </div>
+                        <h3 className="text-[15px] font-black text-slate-800 tracking-tight">เลือกหมวดหมู่</h3>
+                    </div>
+                    
+                    <div className="grid grid-cols-4 gap-2.5">
+                    {settings.defaultCategories.map(cat => {
+                        const isSelected = selectedCategory === cat;
+                        return (
+                        <button
+                            key={cat}
+                            onClick={() => handleCategoryClick(cat)}
+                            className={`py-2.5 px-1 rounded-2xl text-[12px] font-black transition-all duration-300 border text-center flex items-center justify-center min-h-[48px] ${
+                            isSelected 
+                                ? 'bg-gradient-to-br from-fuchsia-500 to-purple-600 text-white border-transparent shadow-[0_8px_15px_rgba(192,38,211,0.3)] scale-105' 
+                                : 'bg-slate-50/80 text-slate-600 border-slate-200/60 hover:border-purple-300 hover:bg-purple-50'
+                            }`}
+                        >
+                            {cat}
+                        </button>
+                        )
+                    })}
+                    </div>
+                </div>
+
+                {/* Action Area */}
+                <div className="bg-white/80 backdrop-blur-xl p-5 rounded-[32px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white">
+                    
+                    <div className="flex items-center gap-2 mb-4 px-1">
+                        <div className="bg-gradient-to-br from-amber-400 to-orange-500 text-white p-1.5 rounded-xl shadow-md shadow-orange-500/30">
+                            <Icon name="tag" size={16} />
+                        </div>
+                        <h3 className="text-[15px] font-black text-slate-800 tracking-tight">ระบุราคา</h3>
+                    </div>
+
+                    {/* Big Input */}
+                    <div className="relative mb-6 group">
+                    <div className="absolute inset-0 bg-gradient-to-br from-slate-100 to-slate-50 rounded-[24px] pointer-events-none border border-slate-200/50 shadow-inner"></div>
+                    <div className="flex items-center justify-center p-6 relative z-10">
+                        <span className="text-slate-300 text-3xl font-black mr-2 pointer-events-none mb-1">฿</span>
+                        <input
+                            ref={priceInputRef}
+                            type="number"
+                            inputMode="decimal"
+                            value={customPrice}
+                            onChange={handlePriceChange}
+                            placeholder="0"
+                            className="w-full text-5xl sm:text-6xl font-black text-center bg-transparent outline-none transition-all duration-200 text-slate-800 placeholder-slate-300"
+                        />
+                    </div>
+                    {customPrice && (
+                        <button 
+                        onClick={handleClearPriceClick}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 bg-rose-500 text-white rounded-full p-2.5 shadow-md shadow-rose-500/30 active:scale-90 transition-all z-20"
+                        >
+                        <Icon name="trash-2" size={18} />
+                        </button>
+                    )}
+                    </div>
+
+                    {/* Quick Prices */}
+                    <div className="grid grid-cols-3 gap-3 mb-6">
+                    {quickPrices.map(price => (
+                        <button
+                        key={price}
+                        onClick={() => handleQuickPriceClick(price)}
+                        className="py-3.5 rounded-2xl bg-gradient-to-b from-white to-slate-50 border border-slate-200 text-slate-700 font-black text-[15px] shadow-sm hover:shadow-md hover:border-blue-300 active:bg-slate-100 active:scale-95 transition-all select-none"
+                        >
+                        +{price}
+                        </button>
+                    ))}
+                    </div>
+
+                    {/* Primary Buttons */}
+                    <div className="grid grid-cols-2 gap-4">
+                    <button
+                        onClick={() => handleAddSaleClick('cash')}
+                        disabled={!customPrice}
+                        className={`flex flex-col items-center justify-center gap-1.5 py-4 rounded-[24px] transition-all duration-300 select-none border border-white/20 ${
+                        customPrice 
+                            ? 'bg-gradient-to-br from-[#00b09b] to-[#96c93d] text-white shadow-[0_10px_20px_rgba(0,176,155,0.4)] active:scale-95' 
+                            : 'bg-slate-100 text-slate-400 cursor-not-allowed shadow-inner'
+                        }`}
+                    >
+                        <Icon name="banknote" size={24} className={customPrice ? 'drop-shadow-md' : ''} />
+                        <span className="font-black text-[14px] tracking-wide">รับเงินสด</span>
+                    </button>
+                    <button
+                        onClick={() => handleAddSaleClick('transfer')}
+                        disabled={!customPrice}
+                        className={`flex flex-col items-center justify-center gap-1.5 py-4 rounded-[24px] transition-all duration-300 select-none border border-white/20 ${
+                        customPrice 
+                            ? 'bg-gradient-to-br from-[#1e3c72] to-[#2a5298] text-white shadow-[0_10px_20px_rgba(30,60,114,0.4)] active:scale-95' 
+                            : 'bg-slate-100 text-slate-400 cursor-not-allowed shadow-inner'
+                        }`}
+                    >
+                        <Icon name="credit-card" size={24} className={customPrice ? 'drop-shadow-md' : ''} />
+                        <span className="font-black text-[14px] tracking-wide">ลูกค้าโอนแล้ว</span>
+                    </button>
+                    </div>
+                </div>
+                </div>
+            );
+
+            const renderHistoryTab = () => (
+                <div className="p-4 pb-32 max-w-md mx-auto w-full animate-fade-in safe-pt">
+                <div className="flex items-center justify-between mb-6 px-2 pt-2">
+                    <h1 className="text-2xl font-black text-slate-800 tracking-tight">บิลรายวัน</h1>
+                    <div className="flex items-center bg-white p-1 rounded-full shadow-md shadow-slate-200/50 border border-white">
+                        <button 
+                        onClick={() => { const d = new Date(currentDateFilter); d.setDate(d.getDate() - 1); setCurrentDateFilter(d.toDateString()); }}
+                        className="w-8 h-8 flex items-center justify-center text-slate-500 hover:bg-slate-100 rounded-full transition-colors font-bold"
+                        >
+                        <Icon name="chevron-down" className="rotate-90" size={18}/>
+                        </button>
+                        <span className="font-black text-slate-800 text-[13px] px-3 tracking-wide">
+                        {isToday(currentDateFilter) ? 'วันนี้' : new Date(currentDateFilter).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' })}
+                        </span>
+                        <button 
+                        onClick={() => { const d = new Date(currentDateFilter); d.setDate(d.getDate() + 1); setCurrentDateFilter(d.toDateString()); }}
+                        disabled={isToday(currentDateFilter)}
+                        className={`w-8 h-8 flex items-center justify-center rounded-full transition-colors ${isToday(currentDateFilter) ? 'text-slate-200' : 'text-slate-500 hover:bg-slate-100'}`}
+                        >
+                        <Icon name="chevron-down" className="-rotate-90" size={18}/>
+                        </button>
+                    </div>
+                </div>
+
+                {renderDashboardHeader(false)}
+
+                <div className="space-y-6">
+                    <div>
+                        <div className="flex justify-between items-center mb-3 px-2">
+                            <h3 className="font-black text-slate-800 flex items-center text-[15px]">
+                                <div className="bg-rose-100 text-rose-500 p-1 rounded-lg mr-2"><Icon name="trending-down" size={14} /></div>
+                                รายจ่าย
+                            </h3>
+                            <button 
+                                onClick={() => setShowExpenseModal(true)}
+                                className="text-[11px] bg-gradient-to-r from-rose-500 to-pink-500 text-white px-4 py-2 rounded-full font-black shadow-md shadow-rose-500/30 active:scale-95 transition-all flex items-center gap-1"
+                            >
+                                <Icon name="plus" size={14} strokeWidth={3}/> บันทึกจ่าย
+                            </button>
+                        </div>
+
+                        <div className="bg-white/80 backdrop-blur-xl rounded-[28px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white overflow-hidden">
+                            {todayExpenses.length === 0 ? (
+                                <div className="p-8 text-center text-slate-400 text-sm font-bold bg-slate-50/50">ไม่มีรายจ่ายวันนี้</div>
+                            ) : (
+                                <div className="divide-y divide-slate-100/80">
+                                    {todayExpenses.map(exp => (
+                                        <div key={exp.id} className="p-5 flex justify-between items-center hover:bg-slate-50/80 transition-colors">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-3 h-3 rounded-full bg-gradient-to-br from-rose-400 to-pink-500 shadow-sm"></div>
+                                                <div className="flex flex-col">
+                                                    <span className="font-black text-slate-800 text-[14px]">{exp.name}</span>
+                                                    <span className="text-[11px] text-slate-400 font-bold tracking-wide">{exp.type}</span>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-4">
+                                                <span className="font-black text-rose-500 text-[16px] drop-shadow-sm">-฿{exp.amount}</span>
+                                                <button onClick={() => deleteItem('expense', exp.id)} className="text-slate-300 hover:text-rose-500 bg-slate-50 hover:bg-rose-50 p-2 rounded-xl transition-colors">
+                                                    <Icon name="trash-2" size={16}/>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    <div>
+                        <div className="flex justify-between items-center mb-3 px-2">
+                            <h3 className="font-black text-slate-800 flex items-center text-[15px]">
+                                <div className="bg-emerald-100 text-emerald-500 p-1 rounded-lg mr-2"><Icon name="trending-up" size={14} /></div>
+                                รายการขาย <span className="text-slate-400 ml-1 text-xs">({todaySales.length})</span>
+                            </h3>
+                        </div>
+
+                        <div className="bg-white/80 backdrop-blur-xl rounded-[28px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white overflow-hidden">
+                            {todaySales.length === 0 ? (
+                                <div className="p-10 text-center text-slate-400 bg-slate-50/50">
+                                    <Icon name="shopping-bag" size={40} className="mx-auto mb-4 opacity-20" />
+                                    <p className="text-[15px] font-black">ยังไม่มีรายการขาย</p>
+                                </div>
+                            ) : (
+                                <div className="divide-y divide-slate-100/80">
+                                    {todaySales.map((sale) => (
+                                        <div key={sale.id} className="p-5 flex justify-between items-center hover:bg-slate-50/80 transition-colors">
+                                            <div className="flex items-center gap-4">
+                                                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-md ${
+                                                    sale.paymentMethod === 'cash' ? 'bg-gradient-to-br from-[#00b09b] to-[#96c93d] shadow-[#00b09b]/30' : 'bg-gradient-to-br from-[#1e3c72] to-[#2a5298] shadow-[#1e3c72]/30'
+                                                }`}>
+                                                    {sale.paymentMethod === 'cash' ? <Icon name="banknote" size={20} /> : <Icon name="credit-card" size={20} />}
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <span className="font-black text-slate-800 text-[14px]">{sale.category}</span>
+                                                    <span className="text-[11px] text-slate-400 font-bold tracking-widest uppercase mt-0.5">
+                                                        {new Date(sale.timestamp).toLocaleTimeString('th-TH', {hour: '2-digit', minute:'2-digit'})}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-4">
+                                                <span className="font-black text-slate-800 text-[18px]">฿{sale.amount}</span>
+                                                <button onClick={() => deleteItem('sale', sale.id)} className="text-slate-300 hover:text-rose-500 bg-slate-50 hover:bg-rose-50 p-2 rounded-xl transition-colors">
+                                                    <Icon name="trash-2" size={16} />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+                </div>
+            );
+
+            const renderStockTab = () => {
+                const totalAllTimeSales = sales.reduce((sum, s) => sum + s.amount, 0);
+                const totalBalesCost = bales.reduce((sum, b) => sum + b.cost, 0);
+                const totalAllTimeExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
+                const overallProfit = totalAllTimeSales - (totalBalesCost + totalAllTimeExpenses);
+
+                return (
+                <div className="p-4 pb-32 max-w-md mx-auto w-full animate-fade-in safe-pt">
+                    <h1 className="text-2xl font-black text-slate-800 mb-6 px-2 pt-2 tracking-tight">คลัง & ต้นทุน</h1>
+
+                    <div className="bg-gradient-to-br from-indigo-900 via-slate-800 to-black rounded-[32px] p-8 text-white shadow-xl shadow-slate-900/20 mb-8 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-48 h-48 bg-purple-500/30 rounded-full blur-3xl transform translate-x-10 -translate-y-10 mix-blend-screen"></div>
+                        
+                        <h2 className="font-black text-slate-400 text-[11px] tracking-widest uppercase mb-6 flex items-center">
+                            <Icon name="wallet" size={16} className="mr-2 text-purple-400"/> ภาพรวมตลอดกาล
+                        </h2>
+                        
+                        <div className="grid grid-cols-2 gap-4 mb-6">
+                            <div>
+                                <p className="text-[10px] text-slate-400 mb-1 font-bold uppercase tracking-wider">ยอดขายรวม</p>
+                                <p className="text-xl font-black">฿{totalAllTimeSales.toLocaleString()}</p>
+                            </div>
+                            <div>
+                                <p className="text-[10px] text-slate-400 mb-1 font-bold uppercase tracking-wider">ต้นทุนทั้งหมด</p>
+                                <p className="text-xl font-black">฿{(totalBalesCost + totalAllTimeExpenses).toLocaleString()}</p>
+                            </div>
+                        </div>
+                        
+                        <div className="pt-6 border-t border-white/10">
+                            <p className="text-[11px] text-slate-400 mb-1 font-black uppercase tracking-widest">กำไรสุทธิ</p>
+                            <div className="flex items-baseline gap-1">
+                                <span className={`text-4xl font-black tracking-tight drop-shadow-md ${overallProfit >= 0 ? 'text-[#84ffc9]' : 'text-[#ff9a9e]'}`}>
+                                    {overallProfit >= 0 ? '+' : ''}{overallProfit.toLocaleString()}
+                                </span>
+                                <span className="text-sm font-black text-slate-500">THB</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="bg-white/80 backdrop-blur-xl p-6 rounded-[32px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white mb-8">
+                    <h3 className="font-black text-slate-800 mb-5 flex items-center text-[15px]">
+                        <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 text-white flex items-center justify-center mr-3 shadow-md shadow-orange-500/30">
+                            <Icon name="scissors" size={16}/>
+                        </div>
+                        เปิดกระสอบใหม่
+                    </h3>
+                    <form onSubmit={handleAddBale} className="space-y-4">
+                        <input 
+                        type="text" required placeholder="ชื่อกระสอบ (เช่น เสื้อ USA เกรด A)"
+                        value={baleForm.name} onChange={e => setBaleForm({...baleForm, name: e.target.value})}
+                        className="w-full p-4 bg-slate-50 border border-slate-200/60 rounded-2xl text-[14px] font-bold outline-none focus:border-orange-400 focus:bg-white transition-colors placeholder-slate-400"
+                        />
+                        <div className="flex gap-3">
+                        <div className="relative flex-1">
+                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-black text-sm">฿</span>
+                            <input 
+                                type="number" inputMode="numeric" required placeholder="ต้นทุน"
+                                value={baleForm.cost} onChange={e => setBaleForm({...baleForm, cost: e.target.value})}
+                                className="w-full p-4 pl-9 bg-slate-50 border border-slate-200/60 rounded-2xl text-[14px] font-black outline-none focus:border-orange-400 focus:bg-white transition-colors"
+                            />
+                        </div>
+                        <input 
+                            type="number" inputMode="numeric" placeholder="จำนวนตัว"
+                            value={baleForm.count} onChange={e => setBaleForm({...baleForm, count: e.target.value})}
+                            className="flex-1 w-full p-4 bg-slate-50 border border-slate-200/60 rounded-2xl text-[14px] font-bold outline-none focus:border-orange-400 focus:bg-white transition-colors placeholder-slate-400"
+                        />
+                        </div>
+                        <button type="submit" className="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white py-4 rounded-2xl font-black text-[14px] mt-2 transition-all active:scale-95 shadow-[0_8px_20px_rgba(249,115,22,0.3)] flex justify-center items-center gap-2">
+                        <Icon name="plus" size={18} strokeWidth={3}/> บันทึกกระสอบ
+                        </button>
+                    </form>
+                    </div>
+
+                    <div>
+                    <h3 className="font-black text-slate-800 px-2 mb-4 text-[15px]">ประวัติกระสอบ ({bales.length})</h3>
+                    <div className="space-y-4">
+                        {bales.map(bale => (
+                        <div key={bale.id} className="bg-white p-5 rounded-[24px] border border-slate-100 shadow-sm relative overflow-hidden group">
+                            <div className="absolute top-0 bottom-0 left-0 w-2 bg-gradient-to-b from-amber-300 to-orange-500"></div>
+                            <div className="flex justify-between items-start mb-4 pl-2">
+                            <div>
+                                <h4 className="font-black text-slate-800 text-[15px] tracking-tight">{bale.name}</h4>
+                                <p className="text-[10px] text-slate-400 font-bold tracking-widest uppercase mt-1">{new Date(bale.timestamp).toLocaleDateString('th-TH')}</p>
+                            </div>
+                            <button onClick={() => deleteItem('bale', bale.id)} className="text-slate-300 hover:text-rose-500 bg-slate-50 hover:bg-rose-50 p-2 rounded-xl transition-colors"><Icon name="trash-2" size={14}/></button>
+                            </div>
+                            <div className="flex justify-between items-center text-xs pl-2 pt-4 border-t border-slate-50">
+                            <div className="flex flex-col">
+                                <span className="text-slate-400 text-[10px] uppercase font-bold tracking-widest mb-1">ทุน</span>
+                                <span className="font-black text-slate-700 text-[14px]">฿{bale.cost.toLocaleString()}</span>
+                            </div>
+                            <div className="flex flex-col text-center">
+                                <span className="text-slate-400 text-[10px] uppercase font-bold tracking-widest mb-1">จำนวน</span>
+                                <span className="font-black text-slate-600 text-[14px]">{bale.estimatedCount || '-'} ตัว</span>
+                            </div>
+                            <div className="flex flex-col text-right">
+                                <span className="text-slate-400 text-[10px] uppercase font-bold tracking-widest mb-1">เฉลี่ยต่อตัว</span>
+                                <span className="font-black text-orange-500 text-[14px]">{bale.estimatedCount > 0 ? `฿${(bale.cost/bale.estimatedCount).toFixed(0)}` : '-'}</span>
+                            </div>
+                            </div>
+                        </div>
+                        ))}
+                        {bales.length === 0 && <p className="text-center text-slate-400 text-sm font-bold py-10 bg-white/50 rounded-[24px] border border-slate-100">ยังไม่มีประวัติกระสอบ</p>}
+                    </div>
+                    </div>
+                </div>
+                );
+            };
+
+            const renderQrTab = () => (
+                <div className="p-4 max-w-md mx-auto w-full min-h-[100dvh] flex flex-col justify-center animate-zoom-in pb-32 relative safe-pt">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-purple-50 -z-10"></div>
+                
+                {!settings.promptpayId ? (
+                    <div className="bg-white/80 backdrop-blur-xl p-8 rounded-[32px] shadow-[0_20px_40px_rgb(0,0,0,0.04)] border border-white text-center">
+                    <div className="w-24 h-24 bg-gradient-to-br from-amber-100 to-amber-200 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
+                        <Icon name="alert-circle" size={40} className="text-amber-600 drop-shadow-sm" />
+                    </div>
+                    <h2 className="text-2xl font-black text-slate-800 mb-3 tracking-tight">ตั้งค่าการรับเงิน</h2>
+                    <p className="text-slate-500 text-[14px] font-medium mb-8 leading-relaxed">กรุณาระบุเบอร์พร้อมเพย์ก่อนใช้งาน QR Code</p>
+                    <button 
+                        onClick={() => setActiveTab('settings')}
+                        className="bg-slate-900 text-white px-6 py-4 rounded-2xl font-black w-full shadow-[0_10px_20px_rgba(0,0,0,0.1)] active:scale-95 transition-all"
+                    >
+                        ไปตั้งค่าบัญชี
+                    </button>
+                    </div>
+                ) : (
+                    <div className="bg-white rounded-[40px] shadow-[0_30px_60px_rgb(0,0,0,0.08)] border border-slate-100 overflow-hidden text-center relative">
+                    <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-blue-50 to-transparent pointer-events-none"></div>
+                    
+                    <div className="pt-12 pb-8 px-6 relative z-10">
+                        <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-[24px] flex items-center justify-center mx-auto mb-6 shadow-[0_10px_20px_rgba(59,130,246,0.3)] rotate-3">
+                            <Icon name="qr-code" size={36} className="text-white -rotate-3 drop-shadow-sm" />
+                        </div>
+                        <p className="text-slate-400 text-[12px] font-black tracking-widest uppercase mb-2">ยอดชำระล่าสุด</p>
+                        <div className="flex justify-center items-baseline gap-1.5 mb-8">
+                        <span className="text-3xl font-black text-slate-300">฿</span>
+                        <span className="text-6xl font-black text-slate-800 tracking-tighter drop-shadow-sm">
+                            {todaySales.length > 0 && todaySales[0].paymentMethod === 'transfer' ? todaySales[0].amount.toLocaleString() : '0'}
+                        </span>
+                        </div>
+                        
+                        <div className="bg-white p-4 rounded-[32px] inline-block mb-8 shadow-[0_0_0_2px_rgba(0,0,0,0.02),0_15px_30px_rgba(0,0,0,0.08)]">
+                        <img 
+                            src={`https://promptpay.io/${settings.promptpayId}/${todaySales.length > 0 && todaySales[0].paymentMethod === 'transfer' ? todaySales[0].amount : 0}.png`} 
+                            alt="PromptPay QR" 
+                            className="w-64 h-64 object-contain rounded-2xl"
+                        />
+                        </div>
+
+                        <div className="bg-slate-50/80 p-5 rounded-3xl border border-slate-100/50">
+                        <p className="text-[10px] text-slate-400 font-black mb-1.5 uppercase tracking-widest">บัญชีรับเงิน (พร้อมเพย์)</p>
+                        <p className="font-mono font-black text-slate-800 text-xl tracking-widest">{settings.promptpayId}</p>
+                        </div>
+                    </div>
+
+                    <div className="p-6 bg-slate-50/50 border-t border-slate-100">
+                        <button 
+                        onClick={() => setActiveTab('sell')}
+                        className="w-full bg-slate-900 text-white py-5 rounded-[24px] font-black text-[16px] active:scale-95 transition-all shadow-[0_10px_20px_rgba(0,0,0,0.1)]"
+                        >
+                        กลับหน้าขายสินค้า
+                        </button>
+                    </div>
+                    </div>
+                )}
+                </div>
+            );
+
+            const renderSettingsTab = () => (
+                <div className="p-4 pb-32 max-w-md mx-auto w-full animate-fade-in safe-pt">
+                <h1 className="text-2xl font-black text-slate-800 mb-6 px-2 pt-2 tracking-tight">ตั้งค่าระบบ</h1>
+                
+                <div className="bg-white/80 backdrop-blur-xl p-6 rounded-[32px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white space-y-6">
+                    <div>
+                    <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest block mb-2">ชื่อร้าน / แผง</label>
+                    <input 
+                        type="text" 
+                        value={settings.shopName}
+                        onChange={(e) => setSettings({...settings, shopName: e.target.value})}
+                        className="w-full p-4 bg-slate-50 border border-slate-200/60 rounded-2xl text-[15px] font-black text-slate-800 outline-none focus:border-purple-400 focus:bg-white transition-colors"
+                    />
+                    </div>
+
+                    <div>
+                    <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest block mb-2 flex items-center">
+                        เบอร์พร้อมเพย์
+                    </label>
+                    <div className="relative">
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-500">
+                            <Icon name="qr-code" size={20} />
+                        </span>
+                        <input 
+                            type="text" inputMode="numeric"
+                            placeholder="เบอร์มือถือ หรือ เลข ปชช."
+                            value={settings.promptpayId}
+                            onChange={(e) => setSettings({...settings, promptpayId: e.target.value})}
+                            className="w-full p-4 pl-12 bg-slate-50 border border-slate-200/60 rounded-2xl text-[15px] font-mono font-black text-slate-800 outline-none focus:border-blue-400 focus:bg-white transition-colors tracking-widest"
+                        />
+                    </div>
+                    <p className="text-[11px] text-slate-400 mt-2 font-bold tracking-wide">สร้าง QR Code รับเงินอัตโนมัติ (ไม่บังคับ)</p>
+                    </div>
+                </div>
+
+                <div className="mt-8">
+                    <button 
+                        onClick={() => {
+                        if(confirm('⚠️ ยืนยันการล้างข้อมูลทั้งหมด? (ข้อมูลจะหายไปทั้งหมดและกู้คืนไม่ได้)')) {
+                            setSales([]);
+                            setExpenses([]);
+                            setBales([]);
+                            alert('ล้างข้อมูลเรียบร้อยแล้ว');
+                        }
+                        }}
+                        className="w-full bg-white border border-rose-100 text-rose-500 font-black py-4 rounded-[24px] text-[14px] hover:bg-rose-50 active:scale-95 transition-all flex items-center justify-center gap-2 shadow-[0_8px_20px_rgb(225,29,72,0.1)]"
+                    >
+                        <Icon name="trash-2" size={18} strokeWidth={3}/> ล้างข้อมูลระบบ
+                    </button>
+                </div>
+
+                <div className="text-center mt-12 mb-8">
+                    <p className="bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500 text-[12px] font-black uppercase tracking-widest mb-1">Market POS Pro</p>
+                    <p className="text-slate-400 text-[10px] font-bold tracking-wide">Version 12.0 Web App</p>
+                </div>
+                </div>
+            );
+
+            return (
+                <div className="bg-[#eef2f6] min-h-[100dvh] w-full flex justify-center overflow-x-hidden">
+                
+                <div className="w-full max-w-md bg-transparent min-h-[100dvh] flex flex-col relative sm:shadow-[0_0_50px_rgba(0,0,0,0.1)] sm:bg-[#eef2f6] sm:border-x border-slate-300/30">
+                    
+                    {/* Decorative Background Blob */}
+                    <div className="fixed top-0 left-0 w-full h-96 bg-gradient-to-b from-blue-100/50 to-transparent pointer-events-none z-[-1]"></div>
+
+                    {/* Main Content Area */}
+                    <div className="flex-grow z-0">
+                    {activeTab === 'sell' && renderSellTab()}
+                    {activeTab === 'history' && renderHistoryTab()}
+                    {activeTab === 'qr' && renderQrTab()}
+                    {activeTab === 'stock' && renderStockTab()}
+                    {activeTab === 'settings' && renderSettingsTab()}
+                    </div>
+
+                    {/* Expense Modal */}
+                    {showExpenseModal && (
+                    <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[60] flex items-end justify-center p-0 animate-fade-in">
+                        <div className="bg-white/95 backdrop-blur-xl rounded-t-[40px] w-full max-w-md p-6 pb-[env(safe-area-inset-bottom,20px)] shadow-[0_-20px_50px_rgba(0,0,0,0.2)] animate-slide-up border-t border-white">
+                        <div className="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-8"></div>
+                        <h3 className="text-2xl font-black mb-6 text-slate-800 text-center tracking-tight">บันทึกรายจ่าย</h3>
+                        <form onSubmit={handleAddExpense} className="space-y-4">
+                            <div>
+                            <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest block mb-2">ประเภทรายจ่าย</label>
+                            <select 
+                                value={expenseForm.type} onChange={e => setExpenseForm({...expenseForm, type: e.target.value})}
+                                className="w-full p-4 bg-slate-50 border border-slate-200/60 rounded-2xl text-[15px] font-bold text-slate-700 outline-none focus:border-rose-400 focus:bg-white transition-colors"
+                            >
+                                {expenseTypes.map(t => <option key={t} value={t}>{t}</option>)}
+                            </select>
+                            </div>
+                            <div>
+                            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block mb-2">ชื่อรายการ</label>
+                            <input 
+                                type="text" required placeholder="เช่น ค่าข้าว, ค่าไฟ"
+                                value={expenseForm.name} onChange={e => setExpenseForm({...expenseForm, name: e.target.value})}
+                                className="w-full p-4 bg-slate-50 border border-slate-200/60 rounded-2xl text-[15px] font-bold text-slate-700 outline-none focus:border-rose-400 focus:bg-white transition-colors"
+                            />
+                            </div>
+                            <div>
+                            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block mb-2">จำนวนเงิน</label>
+                            <div className="relative">
+                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-black text-lg">฿</span>
+                                <input 
+                                    type="number" inputMode="numeric" required placeholder="0"
+                                    value={expenseForm.amount} onChange={e => setExpenseForm({...expenseForm, amount: e.target.value})}
+                                    className="w-full p-4 pl-10 bg-slate-50 border border-slate-200/60 rounded-2xl text-3xl font-black text-rose-500 outline-none focus:border-rose-400 focus:bg-white transition-colors"
+                                />
+                            </div>
+                            </div>
+                            <div className="flex gap-3 pt-6">
+                            <button type="button" onClick={() => setShowExpenseModal(false)} className="flex-1 py-4 bg-slate-100 text-slate-600 font-black rounded-2xl hover:bg-slate-200 transition-colors">ยกเลิก</button>
+                            <button type="submit" className="flex-1 py-4 bg-gradient-to-r from-rose-500 to-pink-500 text-white font-black rounded-2xl active:scale-95 transition-all shadow-[0_8px_20px_rgba(244,63,94,0.3)]">บันทึก</button>
+                            </div>
+                        </form>
+                        </div>
+                    </div>
+                    )}
+
+                    {/* Floating Bottom Navigation */}
+                    <div className="fixed bottom-0 w-full max-w-md z-50 px-5 pb-[env(safe-area-inset-bottom,20px)] pt-2 pointer-events-none">
+                        <div className="bg-white/90 backdrop-blur-2xl border border-white/60 flex justify-around p-2.5 rounded-[36px] shadow-[0_15px_40px_rgba(0,0,0,0.08)] pointer-events-auto">
+                        {[
+                            { id: 'sell', icon: 'shopping-bag', label: 'ขาย' },
+                            { id: 'qr', icon: 'qr-code', label: 'QR' },
+                            { id: 'history', icon: 'history', label: 'บิล' },
+                            { id: 'stock', icon: 'package-open', label: 'คลัง' },
+                            { id: 'settings', icon: 'settings', label: 'ตั้งค่า' },
+                        ].map(tab => {
+                            const isActive = activeTab === tab.id;
+                            return (
+                            <button 
+                                key={tab.id}
+                                onClick={() => setActiveTab(tab.id)}
+                                className={`relative flex flex-col items-center justify-center py-2 px-1 w-[60px] rounded-[24px] transition-all duration-300 ${
+                                isActive ? 'text-purple-600' : 'text-slate-400 hover:text-slate-600'
+                                }`}
+                            >
+                                {isActive && (
+                                    <div className="absolute inset-0 bg-gradient-to-br from-purple-100 to-pink-100 rounded-[24px] -z-10 animate-zoom-in opacity-80"></div>
+                                )}
+                                <Icon name={tab.icon} size={isActive ? 24 : 22} className={`mb-1.5 transition-all duration-300 ${isActive ? 'drop-shadow-sm' : ''}`} strokeWidth={isActive ? 2.5 : 1.5} />
+                                <span className={`text-[10px] tracking-wide transition-all duration-300 ${isActive ? 'font-black' : 'font-bold'}`}>{tab.label}</span>
+                            </button>
+                            )
+                        })}
+                        </div>
+                    </div>
+
+                </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
