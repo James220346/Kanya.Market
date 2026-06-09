@@ -9,7 +9,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="ร้านผ้ากัญญา">
+    <meta name="apple-mobile-web-app-title" content="POS ร้าน JameS">
     <meta name="theme-color" content="#f0f4f8">
     
     <!-- ไอค่อนสไตล์ Chibi Mascot น้องเสื้อยืดหน้ายิ้ม -->
@@ -19,7 +19,7 @@
     <script>
         const manifest = {
             "name": "Market POS Pro",
-            "short_name": "ร้านผ้ากัญญา",
+            "short_name": "POS ร้าน JameS",
             "description": "ระบบจัดการร้านผ้ามือสองหน้าตลาด",
             "start_url": ".",
             "display": "standalone",
@@ -103,12 +103,15 @@
         const App = () => {
             const [activeTab, setActiveTab] = React.useState('sell');
             
-            const [sales, setSales] = React.useState(() => JSON.parse(localStorage.getItem('pos_sales_v14')) || []);
-            const [expenses, setExpenses] = React.useState(() => JSON.parse(localStorage.getItem('pos_expenses_v14')) || []);
-            const [bales, setBales] = React.useState(() => JSON.parse(localStorage.getItem('pos_bales_v14')) || []);
-            const [settings, setSettings] = React.useState(() => JSON.parse(localStorage.getItem('pos_settings_v14')) || {
+            // อัปเดตคีย์การเซฟข้อมูลเป็น _v15 ทั้งหมด เพื่อดึงค่า Default หมวดหมู่ใหม่ทันที
+            const [sales, setSales] = React.useState(() => JSON.parse(localStorage.getItem('pos_sales_v15')) || []);
+            const [expenses, setExpenses] = React.useState(() => JSON.parse(localStorage.getItem('pos_expenses_v15')) || []);
+            const [bales, setBales] = React.useState(() => JSON.parse(localStorage.getItem('pos_bales_v15')) || []);
+            
+            const [settings, setSettings] = React.useState(() => JSON.parse(localStorage.getItem('pos_settings_v15')) || {
                 promptpayId: '',
-                shopName: 'ร้านผ้ากัญญา',
+                shopName: 'ร้านผ้า JameS',
+                // อัปเดตหมวดหมู่สินค้าตามที่ต้องการแล้ว
                 defaultCategories: ['เสื้อยืด', 'เชิ้ต', 'กางเกง', 'ขาสั้น', 'เสื้อกล้าม', 'เดรส', 'กางเกงขายาว', 'อื่นๆ']
             });
 
@@ -117,8 +120,8 @@
             
             // Modal States
             const [showExpenseModal, setShowExpenseModal] = React.useState(false);
-            const [deleteTarget, setDeleteTarget] = React.useState(null); // { type: 'sale'|'expense'|'bale'|'all', id?: string }
-            const [toast, setToast] = React.useState(null); // { message: string, type: 'success' | 'delete' }
+            const [deleteTarget, setDeleteTarget] = React.useState(null); 
+            const [toast, setToast] = React.useState(null); 
 
             const [expenseForm, setExpenseForm] = React.useState({ name: '', amount: '', type: 'ค่าที่' });
             const [baleForm, setBaleForm] = React.useState({ name: '', cost: '', count: '' });
@@ -126,12 +129,12 @@
 
             const priceInputRef = React.useRef(null);
 
-            React.useEffect(() => localStorage.setItem('pos_sales_v14', JSON.stringify(sales)), [sales]);
-            React.useEffect(() => localStorage.setItem('pos_expenses_v14', JSON.stringify(expenses)), [expenses]);
-            React.useEffect(() => localStorage.setItem('pos_bales_v14', JSON.stringify(bales)), [bales]);
-            React.useEffect(() => localStorage.setItem('pos_settings_v14', JSON.stringify(settings)), [settings]);
+            React.useEffect(() => localStorage.setItem('pos_sales_v15', JSON.stringify(sales)), [sales]);
+            React.useEffect(() => localStorage.setItem('pos_expenses_v15', JSON.stringify(expenses)), [expenses]);
+            React.useEffect(() => localStorage.setItem('pos_bales_v15', JSON.stringify(bales)), [bales]);
+            React.useEffect(() => localStorage.setItem('pos_settings_v15', JSON.stringify(settings)), [settings]);
 
-            const quickPrices = [50, 69, 79, 100, 150, 200];
+            const quickPrices = [39, 50, 80, 100, 150, 200];
             const expenseTypes = ['ค่าที่/ค่าไฟ', 'ค่าถุง/อุปกรณ์', 'ค่าเดินทาง', 'จิปาถะ', 'อื่นๆ'];
 
             const isToday = (dateString) => new Date(dateString).toDateString() === currentDateFilter;
@@ -213,7 +216,6 @@
                 showToast('บันทึกกระสอบใหม่สำเร็จ', 'success');
             };
 
-            // 🔑 ระบบลบแบบใหม่ (ใช้ Modal แทน confirm)
             const executeDelete = () => {
                 if (!deleteTarget) return;
                 const { type, id } = deleteTarget;
@@ -227,7 +229,7 @@
                     setBales([]);
                 }
                 
-                setDeleteTarget(null); // ปิด Modal
+                setDeleteTarget(null);
                 showToast(type === 'all' ? 'ล้างข้อมูลระบบเรียบร้อย' : 'ลบรายการสำเร็จ', 'delete');
             };
 
@@ -738,7 +740,7 @@
 
                 <div className="text-center mt-12 mb-8">
                     <p className="bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500 text-[12px] font-black uppercase tracking-widest mb-1">Market POS Pro</p>
-                    <p className="text-slate-400 text-[10px] font-bold tracking-wide">Version 14.0 Premium Modal</p>
+                    <p className="text-slate-400 text-[10px] font-bold tracking-wide">Version 15.0 Updated Categories</p>
                 </div>
                 </div>
             );
@@ -748,10 +750,8 @@
                 
                 <div className="w-full max-w-md bg-transparent min-h-[100dvh] flex flex-col relative sm:shadow-[0_0_50px_rgba(0,0,0,0.1)] sm:bg-[#eef2f6] sm:border-x border-slate-300/30">
                     
-                    {/* Decorative Background Blob */}
                     <div className="fixed top-0 left-0 w-full h-96 bg-gradient-to-b from-blue-100/50 to-transparent pointer-events-none z-[-1]"></div>
 
-                    {/* Global Toast Notification */}
                     {toast && (
                         <div className="fixed top-[env(safe-area-inset-top,20px)] left-1/2 -translate-x-1/2 z-[100] animate-slide-down pointer-events-none">
                             <div className={`px-5 py-3 rounded-full flex items-center gap-2.5 text-sm font-black border shadow-lg ${
@@ -765,7 +765,6 @@
                         </div>
                     )}
 
-                    {/* Main Content Area */}
                     <div className="flex-grow z-0">
                     {activeTab === 'sell' && renderSellTab()}
                     {activeTab === 'history' && renderHistoryTab()}
@@ -774,7 +773,6 @@
                     {activeTab === 'settings' && renderSettingsTab()}
                     </div>
 
-                    {/* 🌟 NEW: Custom Delete Confirmation Modal 🌟 */}
                     {deleteTarget && (
                     <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[70] flex items-center justify-center p-4 animate-fade-in">
                         <div className="bg-white/95 backdrop-blur-xl rounded-[40px] w-full max-w-[320px] p-6 shadow-[0_20px_50px_rgba(0,0,0,0.2)] animate-zoom-in border border-white text-center">
@@ -812,7 +810,6 @@
                     </div>
                     )}
 
-                    {/* Expense Modal */}
                     {showExpenseModal && (
                     <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[60] flex items-end justify-center p-0 animate-fade-in">
                         <div className="bg-white/95 backdrop-blur-xl rounded-t-[40px] w-full max-w-md p-6 pb-[env(safe-area-inset-bottom,20px)] shadow-[0_-20px_50px_rgba(0,0,0,0.2)] animate-slide-up border-t border-white">
@@ -856,7 +853,6 @@
                     </div>
                     )}
 
-                    {/* Floating Bottom Navigation */}
                     <div className="fixed bottom-0 w-full max-w-md z-50 px-5 pb-[env(safe-area-inset-bottom,20px)] pt-2 pointer-events-none">
                         <div className="bg-white/90 backdrop-blur-2xl border border-white/60 flex justify-around p-2.5 rounded-[36px] shadow-[0_15px_40px_rgba(0,0,0,0.08)] pointer-events-auto">
                         {[
